@@ -1,6 +1,6 @@
 Package: qessmasteR
 Type: Fonctions Pour Sociologie Quantitative
-Title: What the Package Does (Title Case)
+Title: Quelques fonctions simplificatrices pour étudiants en sciences sociales
 Version: 0.1.0
 Authors@R: 
     person(given = "Julio Ricardo",
