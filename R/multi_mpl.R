@@ -19,7 +19,7 @@
 #' @return une liste de modèle de probabilité linéaire dont on change a chaque fois la modalité de réference
 #' @export
 #'
-#' @importFrom stats na.omit, as.formula, lm, update.formula
+#' @importFrom stats na.omit as.formula lm update.formula
 #'
 #' @examples
 #' test <- data.frame(replicate(10,sample(0:3,1000,rep=TRUE)))
