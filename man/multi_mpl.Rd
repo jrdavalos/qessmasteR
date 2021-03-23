@@ -2,7 +2,7 @@
 % Please edit documentation in R/multi_mpl.R
 \name{multi_mpl}
 \alias{multi_mpl}
-\title{multi_mpl()}
+\title{multi_mpl}
 \usage{
 multi_mpl(
   formula,
