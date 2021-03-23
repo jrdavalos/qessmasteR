@@ -11,3 +11,13 @@ Et peut-être (si cela n'est pas possible ailleurs) :
   - une nouvelle version de la fonction translate.logit() (package GDAtools) qui ne fonctionne plus
 
 L'idée est de faciliter la vie des étudiants dans leurs traitements de données, toute suggestion est la bienvenue !
+
+Pour l'installation :
+```r
+# installation de devtools
+install.packages("devtools")
+
+# Installation du package
+devtools::install_github("jrdavalos/qessmasteR")
+```
+
