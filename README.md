@@ -17,7 +17,7 @@ Pour l'installation :
 # installation de devtools
 install.packages("devtools")
 
-# Install qessmasteR package
+# Installation du package
 devtools::install_github("jrdavalos/qessmasteR")
 ```
 
