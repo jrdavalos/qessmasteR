@@ -9,11 +9,11 @@ stat_ajust(..., ref = NULL)
 \arguments{
 \item{...}{le ou les modèles testés}
 
-\item{ref}{NULL par défaut}
+\item{ref}{NULL par défaut. Modèle saturé, afin que ses indicateurs AIC et BIC soient nuls.}
 }
 \value{
 un tableau regroupant tous les indicateurs
 }
 \description{
-Permet d'obtenir les indicateurs d'ajustement (variance, degrés de liberté, p-value, dissimilarité, AIC et BIC). Cela a un intérêt notamment concernant les modèles log-linéaires sur tableau de contingence pour lesquels la fonction glm n'arrive pas à produire d'AIC ou de BIC.
+Permet d'obtenir les indicateurs d'ajustement (variance, degrés de liberté, p-value, dissimilarité, AIC et BIC) pour les modèles log-linéaires pour lesquels les fonctions classiques ne fonctionnent pas. Merci à Maxime Parodi de nous avoir partagé son code.
 }
