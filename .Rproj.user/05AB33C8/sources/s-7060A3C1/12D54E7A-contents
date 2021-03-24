@@ -1,0 +1,23 @@
+Package: qessmasteR
+Date: 2021-03-23
+Title: Fonctions simplificatrices pour étudiants en sciences sociales
+Version: 0.1.0
+Authors@R: 
+    person(given = "Julio Ricardo",
+           family = "Davalos",
+           role = c("aut", "cre"),
+           email = "davalosjulioricardo@gmail.com")
+Description: Le présent package a vocation d'aller plus vite dans l'utilisation de certaines fonctionnalités redondantes de R pour les étudiants en sciences sociales dans leurs traitements de données.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    stats
+Depends: 
+    R (>= 2.10)
+URL: https://github.com/jrdavalos/qessmasteR
+BugReports: https://github.com/jrdavalos/qessmasteR/issues
+Suggests: 
+    testthat

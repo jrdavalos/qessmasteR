@@ -74,7 +74,7 @@ multi_mpl <- function(formula, data, subset = NULL, weights = NULL, na.action = 
     reg[[i]] <- do.call(lm, args)
     # on change le 'call' sinon la regression ne sera pas reconnue par summary() ou stargazer()
     reg[[i]][["call"]] <- str2lang(paste0('lm(formula=',deparse(args$formula),
-                                          ',data =',deparse(substitute(data)),')'))
+                                          ',data =',deparse(substitute(data)),')',collapse = ""))
   }
   reg
 }
