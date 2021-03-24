@@ -21,7 +21,7 @@ multi_mpl(
 )
 }
 \arguments{
-\item{formula}{formule de la régression a appliquer}
+\item{formula}{formule de la régression a appliquer, y doit être en factor ou character et non numérique}
 
 \item{data}{base de données}
 
