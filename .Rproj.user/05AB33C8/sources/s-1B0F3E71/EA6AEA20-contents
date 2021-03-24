@@ -1,0 +1,42 @@
+stat_ajust <- function(...) {
+  list_glm <- enquos(...)
+  noms <- as.character(list_glm) %>% map_chr(~str_sub(.x, start = 2))
+  list_glm <- map(list_glm, rlang::eval_tidy)
+
+  return(map2_dfr(list_glm, noms, ~ tibble(
+    model = .y,
+    G2 = .x$deviance, 
+    ddl = .x$df.residual,
+    p.value.G2 = 1 - pchisq(.x$deviance, .x$df.residual),
+    dissimilarity = sum(abs(.x$y - .x$fitted.values)) / sum(.x$y) / 2,
+    AIC = .x$aic,
+    BIC = AIC(.x, k = log(sum(.x$y)))
+    )))
+}
+
+
+stat_ajust2 <- function(..., ref = NULL) {
+  list_glm <- enquos(...)
+  noms <- as.character(list_glm) %>% map_chr(~str_sub(.x, start = 2))
+  list_glm <- map(list_glm, rlang::eval_tidy)
+  
+  if (is.null(ref)) {
+      aic_ref <- 0
+      bic_ref <- 0
+    } else {
+      Mod_ref <- enquo(ref)
+      aic_ref <- rlang::eval_tidy(Mod_ref)$deviance - 2 * rlang::eval_tidy(Mod_ref)$df.residual
+      bic_ref <- rlang::eval_tidy(Mod_ref)$deviance - log(sum(rlang::eval_tidy(Mod_ref)$y)) * rlang::eval_tidy(Mod_ref)$df.residual
+    }
+  
+  return(map2_dfr(list_glm, noms, ~ tibble(
+    model = .y,
+    G2 = .x$deviance, 
+    ddl = .x$df.residual,
+    p.value.G2 = 1 - pchisq(.x$deviance, .x$df.residual),
+    dissimilarity = sum(abs(.x$y - .x$fitted.values)) / sum(.x$y) / 2,
+    AIC = .x$deviance - 2 * .x$df.residual - aic_ref,
+    BIC = .x$deviance - log(sum(.x$y)) * .x$df.residual - bic_ref
+    )
+  ))
+}
