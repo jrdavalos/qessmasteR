@@ -1,5 +1,5 @@
 #' @title stat_ajust
-#' @author Maxime Parodi
+#' @author Maxime Parodi (merci à lui pour son code)
 #'
 #' @description  Permet d'obtenir les indicateurs d'ajustement (variance, degrés de liberté, p-value, dissimilarité, AIC et BIC) pour les modèles log-linéaires pour lesquels les fonctions classiques ne fonctionnent pas.
 #'
@@ -15,7 +15,6 @@
 #' @importFrom tibble tibble
 #' @importFrom purrr map map_chr map2_dfr
 #' @importFrom magrittr %>%
-#'
 
 stat_ajust <- function(..., ref = NULL) {
   list_glm <- enquos(...)

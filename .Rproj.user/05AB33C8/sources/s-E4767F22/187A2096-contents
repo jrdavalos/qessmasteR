@@ -21,7 +21,7 @@
 #'
 #' @importFrom stats na.omit as.formula lm update.formula
 #'
-#' @examples
+#' @example
 #' data <- data.frame(replicate(10,sample(0:3,1000,rep=TRUE)))
 #' data$X1 <- as.factor(data$X1)
 #' multi_mpl(X1 ~ X2 + X3 + X6 + X9:X10, data)
