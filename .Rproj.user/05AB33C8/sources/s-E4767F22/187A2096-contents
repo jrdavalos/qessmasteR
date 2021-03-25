@@ -1,6 +1,7 @@
-#' multi_mpl
+#' @title  multi_mpl
+#' @author Julio Ricardo Davalos
 #'
-#' Permet de réaliser une liste de modèles de probabilité linéaire. Cela a un intérêt dans le cas où la variable expliquée comporte plus de deux catégories. On a ainsi un modèle pour chaque modalité qui sera placée en référence. Cela permet d'obtenir des résultats aisément interprétables que les logit polytomiques sans passer par la traduction présentée par Jérôme Deauvieau dans "Comparer les résultats d'un modèle logit dichotomique ou polytomique entre plusieurs groupes à partir des probabilité́s estimées", Bulletin de Méthodologie sociologique, 2019.
+#' @description  Permet de réaliser une liste de modèles de probabilité linéaire. Cela a un intérêt dans le cas où la variable expliquée comporte plus de deux catégories. On a ainsi un modèle pour chaque modalité qui sera placée en référence. Cela permet d'obtenir des résultats aisément interprétables que les logit polytomiques sans passer par la traduction présentée par Jérôme Deauvieau dans "Comparer les résultats d'un modèle logit dichotomique ou polytomique entre plusieurs groupes à partir des probabilité́s estimées", Bulletin de Méthodologie sociologique, 2019.
 #'
 #' @param formula formule de la régression a appliquer, y doit être en factor ou character et non numérique
 #' @param data base de données
@@ -17,14 +18,13 @@
 #' @param ... variable de pondération ou sous ensemble
 #'
 #' @return une liste de modèle de probabilité linéaire dont on change a chaque fois la modalité de réference
-#' @export
 #'
 #' @importFrom stats na.omit as.formula lm update.formula
 #'
 #' @examples
-#' test <- data.frame(replicate(10,sample(0:3,1000,rep=TRUE)))
-#' test$X1 <- as.factor(test$X1)
-#' multi_mpl(X1 ~ X2 + X3 + X6 + X9:X10, test)
+#' data <- data.frame(replicate(10,sample(0:3,1000,rep=TRUE)))
+#' data$X1 <- as.factor(data$X1)
+#' multi_mpl(X1 ~ X2 + X3 + X6 + X9:X10, data)
 
 multi_mpl <- function(formula, data, subset = NULL, weights = NULL, na.action = na.omit, method = "qr", model = TRUE, x = FALSE, y = FALSE, qr = TRUE, singular.ok = TRUE, offset = NULL,...) {
   # on prend les noms des arguments en ... s'il y en a
