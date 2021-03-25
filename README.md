@@ -8,6 +8,7 @@ On y trouve pour l'instant :
 En prévision : 
   - des fonctions de mise en forme de résultats (pour ACM et tableaux)
   - une fonction de calcul d'ajustements des modèles
+
 Et peut-être (si cela elle n'est pas réparée entre temps) :
   - une nouvelle version de la fonction translate.logit() (package GDAtools) qui ne fonctionne plus
 
