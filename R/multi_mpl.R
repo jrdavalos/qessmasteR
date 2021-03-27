@@ -21,6 +21,8 @@
 #'
 #' @importFrom stats na.omit as.formula lm update.formula
 #'
+#' @export
+#'
 #' @example
 #' data <- data.frame(replicate(10,sample(0:3,1000,rep=TRUE)))
 #' data$X1 <- as.factor(data$X1)

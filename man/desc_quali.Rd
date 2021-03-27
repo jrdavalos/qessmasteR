@@ -2,7 +2,7 @@
 % Please edit documentation in R/desc_quali.R
 \name{desc_quali}
 \alias{desc_quali}
-\title{desc_quali}
+\title{desc_quali (beta)}
 \usage{
 desc_quali(...)
 }

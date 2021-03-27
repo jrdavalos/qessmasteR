@@ -11,6 +11,8 @@
 #' @importFrom dplyr bind_rows
 #' @importFrom tibble tibble
 #'
+#' @export
+#'
 #' @example
 #' data <- data.frame(replicate(3,sample(0:3,1000,rep=TRUE)))
 #' desc_quali(data$X1,data$X2,data$X3)
