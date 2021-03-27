@@ -53,6 +53,11 @@ une liste de modèle de probabilité linéaire dont on change a chaque fois la m
 \description{
 Permet de réaliser une liste de modèles de probabilité linéaire. Cela a un intérêt dans le cas où la variable expliquée comporte plus de deux catégories. On a ainsi un modèle pour chaque modalité qui sera placée en référence. Cela permet d'obtenir des résultats aisément interprétables que les logit polytomiques sans passer par la traduction présentée par Jérôme Deauvieau dans "Comparer les résultats d'un modèle logit dichotomique ou polytomique entre plusieurs groupes à partir des probabilité́s estimées", Bulletin de Méthodologie sociologique, 2019.
 }
+\examples{
+data <- data.frame(replicate(10,sample(0:3,1000,rep=TRUE)))
+data$X1 <- as.factor(data$X1)
+multi_mpl(X1 ~ X2 + X3 + X6 + X9:X10, data)
+}
 \author{
 Julio Ricardo Davalos
 }

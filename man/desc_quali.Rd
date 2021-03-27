@@ -15,6 +15,10 @@ un tableau avec les effectifs et fréquences de chaque modalité de chaque varia
 \description{
 Permet d'obtenir une description de plusieurs variables en même temps avec la fonction freq()
 }
+\examples{
+data <- data.frame(replicate(3,sample(0:3,1000,rep=TRUE)))
+desc_quali(data$X1,data$X2,data$X3)
+}
 \author{
 Kanto Fiaferana
 }
