@@ -1,7 +1,7 @@
 #' @title  multi_mpl
 #' @author Julio Ricardo Davalos
 #'
-#' @description  Permet de réaliser une liste de modèles de probabilité linéaire. Cela a un intérêt dans le cas où la variable expliquée comporte plus de deux catégories. On a ainsi un modèle pour chaque modalité qui sera placée en référence. Cela permet d'obtenir des résultats aisément interprétables que les logit polytomiques sans passer par la traduction présentée par Jérôme Deauvieau dans "Comparer les résultats d'un modèle logit dichotomique ou polytomique entre plusieurs groupes à partir des probabilité́s estimées", Bulletin de Méthodologie sociologique, 2019.
+#' @description  Permet de réaliser une liste de modèles de probabilité linéaire. Cela a un intérêt dans le cas où la variable expliquée comporte plus de deux catégories. On a ainsi un modèle pour chaque modalité qui sera placée en référence. Cela permet d\'obtenir des résultats aisément interprétables que les logit polytomiques sans passer par la traduction présentée par Jérôme Deauvieau dans \"Comparer les résultats d\'un modèle logit dichotomique ou polytomique entre plusieurs groupes à partir des probabilités estimées\", Bulletin de Méthodologie sociologique, 2019.
 #'
 #' @param formula formule de la régression a appliquer, y doit être en factor ou character et non numérique
 #' @param data base de données
