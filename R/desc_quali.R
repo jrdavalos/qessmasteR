@@ -9,6 +9,7 @@
 #'
 #' @importFrom questionr freq
 #' @importFrom dplyr bind_rows
+#' @importFrom tibble rownames_to_column
 #' @importFrom tibble tibble
 #'
 #' @export
@@ -19,9 +20,12 @@
 
 desc_quali <- function(...) {
   args <- list(...)
+
   z <- lapply(args, function(x) {
     freq(x, total = TRUE, valid = FALSE, exclude = NA)
   })
 
-  bind_rows(z) %>% tibble
+  z %>% bind_rows %>% rownames_to_column("Modalités") %>% tibble
 }
+
+# gots to add a if(str_detect(., "Total")==T){glue("Total.{variable_name}")}
