@@ -9,6 +9,7 @@
 #'
 #' @importFrom questionr freq
 #' @importFrom dplyr bind_rows
+#' @importFrom tibble rownames_to_column
 #' @importFrom tibble tibble
 #'
 #' @export
@@ -23,5 +24,5 @@ desc_quali <- function(...) {
     freq(x, total = TRUE, valid = FALSE, exclude = NA)
   })
 
-  bind_rows(z) %>% tibble
+  z %>% bind_rows %>% rownames_to_column %>% tibble
 }
