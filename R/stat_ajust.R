@@ -1,6 +1,7 @@
 #' @title stat_ajust
 #' @author Maxime Parodi (merci à lui pour son code)
 #'
+#'
 #' @description  Permet d'obtenir les indicateurs d'ajustement (variance, degrés de liberté, p-value, dissimilarité, AIC et BIC) pour les modèles log-linéaires pour lesquels les fonctions classiques ne fonctionnent pas.
 #'
 #' @param ... le ou les modèles testés

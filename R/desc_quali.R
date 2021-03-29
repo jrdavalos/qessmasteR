@@ -9,11 +9,9 @@
 #'
 #' @importFrom questionr freq
 #' @importFrom dplyr bind_rows
-#' @importFrom tibble rownames_to_column
-#' @importFrom tibble tibble
+#' @importFrom tibble tibble rownames_to_column
 #'
 #' @export
-#'
 #' @examples
 #' data <- data.frame(replicate(3,sample(0:3,1000,rep=TRUE)))
 #' desc_quali(data$X1,data$X2,data$X3)
