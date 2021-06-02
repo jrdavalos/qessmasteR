@@ -19,16 +19,16 @@
 
 stat_ajust <- function(..., ref = NULL) {
   list_glm <- enquos(...)
-  noms <- map_chr(list_glm, rlang::as_name)
+  noms <- as.character(list_glm) %>% map_chr(~str_sub(.x, start = 2))
   list_glm <- map(list_glm, rlang::eval_tidy)
 
   if (is.null(ref)) {
     aic_ref <- 0
     bic_ref <- 0
   } else {
-    mod_ref <- rlang::'!!'(rlang::enquo(ref))
-    aic_ref <- mod_ref$deviance - 2 * mod_ref$df.residual
-    bic_ref <- mod_ref$deviance - log(sum(mod_ref$y)) * mod_ref$df.residual
+    Mod_ref <- enquo(ref)
+    aic_ref <- rlang::eval_tidy(Mod_ref)$deviance - 2 * rlang::eval_tidy(Mod_ref)$df.residual
+    bic_ref <- rlang::eval_tidy(Mod_ref)$deviance - log(sum(rlang::eval_tidy(Mod_ref)$y)) * rlang::eval_tidy(Mod_ref)$df.residual
   }
 
   return(map2_dfr(list_glm, noms, ~ tibble(
