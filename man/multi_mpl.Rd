@@ -43,7 +43,7 @@ multi_mpl(
 
 \item{singular.ok}{logique. voir lm}
 
-\item{offset}{arguments additionnels (voir lm)}
+\item{offset}{arguments additionnels (voir lm())}
 
 \item{...}{variable de pondération ou sous ensemble}
 }

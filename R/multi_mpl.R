@@ -14,7 +14,7 @@
 #' @param y logique. Retourne les arguments si TRUE
 #' @param qr logique. Retourne les arguments si TRUE
 #' @param singular.ok logique. voir lm
-#' @param offset arguments additionnels (voir lm)
+#' @param offset arguments additionnels (voir lm())
 #' @param ... variable de pondération ou sous ensemble
 #'
 #' @return une liste de modèle de probabilité linéaire dont on change a chaque fois la modalité de réference
