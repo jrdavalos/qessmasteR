@@ -6,7 +6,7 @@
 #' @param data les donnees
 #' @param x variable a mettre en ligne
 #' @param y variable a mettre en colonne
-#' @param pond variable de ponderation (facultatif)
+#' @param pond variable de ponderation (facultatif), doit absolument etre écrit sous la forme data$pond
 #' @param tot_pond logique. Si FALSE (valeur par defaut) alors les effectifs ne sont pas ponderes.
 #' @param norm_pond logique. Si TRUE alors normalise les poids de la ponderation (la somme des poids est alors egale a la somme des effectifs). FALSE est la valeur par defaut.
 #' @param num logique. Si TRUE (valeur par defaut) alors les effectifs sont affiches
