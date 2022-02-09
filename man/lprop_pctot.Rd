@@ -23,7 +23,7 @@ lprop_pctot(
 
 \item{y}{variable a mettre en colonne}
 
-\item{pond}{variable de ponderation (facultatif)}
+\item{pond}{variable de ponderation (facultatif), doit absolument etre écrit sous la forme data$pond}
 
 \item{tot_pond}{logique. Si FALSE (valeur par defaut) alors les effectifs ne sont pas ponderes.}
 
