@@ -1,15 +1,15 @@
 #' @title lprop_pctot
 #' @author Julio Ricardo Davalos
-#' @description Permet d'obtenir un tableau croise avec les pourcentages en lignes, mais ajoute une colonne avec le pourcentage total de la modalite.
-#' En cas de variable de ponderation, les pourcentages en lignes et de la modalite sont ponderes mais on peut choisir entre effectifs ponderes et effectifs reels.
+#' @description Permet d'obtenir un tableau croise avec les pourcentages en lignes, mais ajoute une colonne avec le pourcentage total de la modalité.
+#' En cas de variable de pondération, les pourcentages en lignes et de la modalité sont pondérés mais on peut choisir entre effectifs pondérés et effectifs réels.
 #'
-#' @param data les donnees
+#' @param data les données
 #' @param x variable a mettre en ligne
 #' @param y variable a mettre en colonne
-#' @param pond variable de ponderation (facultatif), doit absolument etre écrit sous la forme data$pond
-#' @param tot_pond logique. Si FALSE (valeur par defaut) alors les effectifs ne sont pas ponderes.
-#' @param norm_pond logique. Si TRUE alors normalise les poids de la ponderation (la somme des poids est alors egale a la somme des effectifs). FALSE est la valeur par defaut.
-#' @param num logique. Si TRUE (valeur par defaut) alors les effectifs sont affiches
+#' @param pond variable de pondération (facultatif), doit absolument être écrit sous la forme data$pond
+#' @param tot_pond logique. Si FALSE (valeur par deéfaut) alors les effectifs ne sont pas pondérés.
+#' @param norm_pond logique. Si TRUE alors normalise les poids de la pondération (la somme des poids est alors égale a la somme des effectifs). FALSE est la valeur par défaut.
+#' @param num logique. Si TRUE (valeur par défaut) alors les effectifs sont affiches
 #' @param ch nombre de chiffres apres la virgule
 #' @param nr comportements vis-a-vis des NA (voir table())
 #'

@@ -4,7 +4,17 @@
 \alias{multi_croise}
 \title{multi_croise}
 \usage{
-multi_croise(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE)
+multi_croise(
+  data,
+  var_princ,
+  ...,
+  NR = FALSE,
+  pct_ligne = TRUE,
+  nb = 1,
+  pond = NULL,
+  tot_pond = FALSE,
+  norm_pond = FALSE
+)
 }
 \arguments{
 \item{data}{base de données}
@@ -16,6 +26,14 @@ multi_croise(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE)
 \item{NR}{FALSE par défaut. Compte les non-réponses.}
 
 \item{pct_ligne}{TRUE par défaut. Pourcentages en ligne, sinon en colonne.}
+
+\item{nb}{nombre de décimales pour les pourcentages. 1 par défaut}
+
+\item{pond}{variable de pondération (facultatif), doit absolument être écrit sous la forme data$pond}
+
+\item{tot_pond}{logique. Si FALSE (valeur par deéfaut) alors les effectifs ne sont pas pondérés.}
+
+\item{norm_pond}{logique. Si TRUE alors normalise les poids de la pondération (la somme des poids est alors égale a la somme des effectifs). FALSE est la valeur par défaut.}
 }
 \value{
 un tibble regroupant tous les tableaux croisés avec pourcentages et effectifs.

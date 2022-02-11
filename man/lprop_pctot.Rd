@@ -17,19 +17,19 @@ lprop_pctot(
 )
 }
 \arguments{
-\item{data}{les donnees}
+\item{data}{les données}
 
 \item{x}{variable a mettre en ligne}
 
 \item{y}{variable a mettre en colonne}
 
-\item{pond}{variable de ponderation (facultatif), doit absolument etre écrit sous la forme data$pond}
+\item{pond}{variable de pondération (facultatif), doit absolument être écrit sous la forme data$pond}
 
-\item{tot_pond}{logique. Si FALSE (valeur par defaut) alors les effectifs ne sont pas ponderes.}
+\item{tot_pond}{logique. Si FALSE (valeur par deéfaut) alors les effectifs ne sont pas pondérés.}
 
-\item{norm_pond}{logique. Si TRUE alors normalise les poids de la ponderation (la somme des poids est alors egale a la somme des effectifs). FALSE est la valeur par defaut.}
+\item{norm_pond}{logique. Si TRUE alors normalise les poids de la pondération (la somme des poids est alors égale a la somme des effectifs). FALSE est la valeur par défaut.}
 
-\item{num}{logique. Si TRUE (valeur par defaut) alors les effectifs sont affiches}
+\item{num}{logique. Si TRUE (valeur par défaut) alors les effectifs sont affiches}
 
 \item{ch}{nombre de chiffres apres la virgule}
 
@@ -39,8 +39,8 @@ lprop_pctot(
 un data.frame
 }
 \description{
-Permet d'obtenir un tableau croise avec les pourcentages en lignes, mais ajoute une colonne avec le pourcentage total de la modalite.
-En cas de variable de ponderation, les pourcentages en lignes et de la modalite sont ponderes mais on peut choisir entre effectifs ponderes et effectifs reels.
+Permet d'obtenir un tableau croise avec les pourcentages en lignes, mais ajoute une colonne avec le pourcentage total de la modalité.
+En cas de variable de pondération, les pourcentages en lignes et de la modalité sont pondérés mais on peut choisir entre effectifs pondérés et effectifs réels.
 }
 \examples{
 data <- data.frame(id=1:500, group = rep(LETTERS[1:2], 500/2), age = sample(18:30, 500, replace = TRUE), weights = abs(rnorm(500)))
