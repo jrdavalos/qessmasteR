@@ -11,8 +11,12 @@ multi_croise(
   NR = FALSE,
   pct_ligne = TRUE,
   nb = 1,
+  p.val = FALSE,
+  cram.v = FALSE,
+  tot = c("row", "col"),
+  eff = TRUE,
+  pourcent = TRUE,
   pond = NULL,
-  tot_pond = FALSE,
   norm_pond = FALSE
 )
 }
@@ -29,14 +33,22 @@ multi_croise(
 
 \item{nb}{nombre de décimales pour les pourcentages. 1 par défaut}
 
-\item{pond}{variable de pondération (facultatif), doit absolument être écrit sous la forme data$pond}
+\item{p.val}{FALSE par défaut Si TRUE alors la p-value s'affiche en dernière colonne.}
 
-\item{tot_pond}{logique. Si FALSE (valeur par deéfaut) alors les effectifs ne sont pas pondérés.}
+\item{cram.v}{FALSE par défaut Si TRUE alors le V de cramer s'affiche en dernière colonne. Afficher le V de Cramer implique d'afficher la p-value}
+
+\item{tot}{Affiche ou non les totaux en ligne et/ou en colonne. c("row", "col") par défaut, peut être aussi "row" ou "col" ou NULL.}
+
+\item{eff}{TRUE par défaut. affiche les effectifs par case entre parenthèse.}
+
+\item{pourcent}{TRUE par défaut. Met le signe \% après les pourcentages.}
+
+\item{pond}{variable de pondération (facultatif), doit absolument être écrit sous la forme data$pond}
 
 \item{norm_pond}{logique. Si TRUE alors normalise les poids de la pondération (la somme des poids est alors égale a la somme des effectifs). FALSE est la valeur par défaut.}
 }
 \value{
-un tibble regroupant tous les tableaux croisés avec pourcentages et effectifs.
+un tibble regroupant tous les tableaux croisés avec pourcentages et effectifs. Si les pourcentages sont en ligne et que les totaux sont activés alors la ligne de total est nommée "Ensemble" et la colonne de total est nommée "Total" et inversement pour les pourcentages en colonne.
 }
 \description{
 Permet d'obtenir un tableau croisant une variable d'intérêt avec une liste d'autres variables.
