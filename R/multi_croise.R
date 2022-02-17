@@ -25,7 +25,7 @@
 #' @importFrom rlang enquos
 #' @importFrom tibble tibble rownames_to_column
 #' @importFrom purrr map_dfr
-#' @importFrom dplyr %>% mutate rename if_else select
+#' @importFrom dplyr %>% mutate rename if_else select case_when
 #' @importFrom questionr wtd.table
 #' @importFrom janitor %>% tabyl adorn_totals adorn_percentages adorn_pct_formatting adorn_ns as_tabyl chisq.test
 
@@ -72,7 +72,8 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
 
     tab <- tabl %>%
       adorn_totals(where = tot, # les totaux a mettre
-                   name = ifelse(pct_ligne, c("Ensemble", "Total"), c("Total", "Ensemble"))) %>%
+                   name = case_when(pct_ligne ~ c("Ensemble", "Total"), 
+                                    TRUE      ~ c("Total", "Ensemble"))) %>%
       # les noms des totaux selon si pct en ligne ou en colonne
       adorn_percentages(denominator = ifelse(pct_ligne, "row", "col")) %>%
       adorn_pct_formatting(digits = nb, rounding = "half up", affix_sign = pourcent) #decimales
