@@ -64,7 +64,8 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
       v <- as.numeric(sqrt(chid/(n * dim))) %>% format(digits = 2) %>% paste("V =", .)
       }
     if (p.val) {
-      p <- {janitor::chisq.test(tabl)$p.value} %>% format(digits = 2) %>% paste("p.v =", .)
+      p <- janitor::chisq.test(tabl)$p.value
+      p <- format(p, digits = 2, scientific = ifelse(p < 0.001, T, F)) %>% paste("p.v =", .)
       if (cram.v == FALSE) {
         v <- ""
         }
