@@ -10,15 +10,16 @@
 #' @param NR FALSE par défaut. Compte les non-réponses.
 #' @param pct_ligne TRUE par défaut. Pourcentages en ligne, sinon en colonne.
 #' @param nb nombre de décimales pour les pourcentages. 1 par défaut
-#' @param p.val FALSE par défaut Si TRUE alors la p-value s'affiche en dernière colonne.
-#' @param cram.v FALSE par défaut Si TRUE alors le V de cramer s'affiche en dernière colonne. Afficher le V de Cramer implique d'afficher la p-value
+#' @param p.val FALSE par défaut. Si TRUE alors la p-value s'affiche en dernière colonne.
+#' @param cram.v FALSE par défaut. Si TRUE alors le V de cramer s'affiche en dernière colonne. Afficher le V de Cramer implique d'afficher la p-value
+#' @param sign 0.05 par défaut. Si le test du Khi2 n'est pas significatif au seuil choisi alors pas de calcul du V de Cramer.
 #' @param tot Affiche ou non les totaux en ligne et/ou en colonne. c("row", "col") par défaut, peut être aussi "row" ou "col" ou NULL.
 #' @param eff TRUE par défaut. affiche les effectifs par case entre parenthèse.
 #' @param pourcent TRUE par défaut. Met le signe % après les pourcentages.
 #' @param pond variable de pondération (facultatif), doit absolument être écrit sous la forme data$pond
 #' @param norm_pond logique. Si TRUE alors normalise les poids de la pondération (la somme des poids est alors égale a la somme des effectifs). FALSE est la valeur par défaut.
 #'
-#' @return un tibble regroupant tous les tableaux croisés avec pourcentages et effectifs. Si les pourcentages sont en ligne et que les totaux sont activés alors la ligne de total est nommée "Ensemble" et la colonne de total est nommée "Total" et inversement pour les pourcentages en colonne.
+#' @return Un tabyl data.frame regroupant tous les tableaux croisés avec pourcentages et effectifs. Si les pourcentages sont en ligne et que les totaux sont activés alors la ligne de total est nommée "Ensemble" et la colonne de total est nommée "Total" et inversement pour les pourcentages en colonne.
 #' @export
 #'
 #' @importFrom stats na.omit as.formula lm update.formula
@@ -30,9 +31,10 @@
 #' @importFrom janitor %>% tabyl adorn_totals adorn_percentages adorn_pct_formatting adorn_ns as_tabyl chisq.test
 
 multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb = 1, p.val = FALSE,
-                         cram.v = FALSE, tot = c("row", "col"), eff = TRUE, pourcent = TRUE,
+                         cram.v = FALSE, sign = 0.05, tot = c("row", "col"), eff = TRUE, pourcent = FALSE,
                          pond = NULL, norm_pond = FALSE) {
 
+  if (cram.v) {p.val <- TRUE} # si V de Cramer alors forcement p value
   if (is.null(pond)) {# si pas de ponderation alors simplifie
     tableau <- function(var){
       tab <- data %>%
@@ -56,31 +58,31 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
   }
 
   transformation <- function(tabl){
+    if (p.val) {
+      p <- janitor::chisq.test(tabl)$p.value
+      if (p > sign) {cram.v <- FALSE}
+      p <- format(p, digits = 2, scientific = ifelse(p < 0.001, T, F))
+      }
     if (cram.v) {
-      p.val <-  TRUE
       n <- sum(tabl[2:ncol(tabl)])
       chid <- janitor::chisq.test(tabl, correct = FALSE)$statistic
       dim <- min(nrow(tabl), ncol(tabl)) - 1
       v <- as.numeric(sqrt(chid/(n * dim))) %>% format(digits = 2) %>% paste("V =", .)
       }
-    if (p.val) {
-      p <- janitor::chisq.test(tabl)$p.value
-      p <- format(p, digits = 2, scientific = ifelse(p < 0.001, T, F)) %>% paste("p.v =", .)
-      if (cram.v == FALSE) {
-        v <- ""
-        }
-      }
 
     tab <- tabl %>%
       adorn_totals(where = tot, # les totaux a mettre
-                   name = case_when(pct_ligne ~ c("Ensemble", "Total"), 
+                   name = case_when(pct_ligne ~ c("Ensemble", "Total"),
                                     TRUE      ~ c("Total", "Ensemble"))) %>%
       # les noms des totaux selon si pct en ligne ou en colonne
       adorn_percentages(denominator = ifelse(pct_ligne, "row", "col")) %>%
       adorn_pct_formatting(digits = nb, rounding = "half up", affix_sign = pourcent) #decimales
 
     if (eff) {tab <- tab %>% adorn_ns()} # effectifs sous la forme (n)
-    if (p.val) {tab <- tab %>% mutate(Test = c(p, v, rep("", nrow(tab) - 2)))}
+    if (p.val) {
+      if (cram.v) {tab <- tab %>% mutate(Khi2 = c(p, rep(v, nrow(tab) - 1)))}
+      else {tab <- tab %>% mutate(Khi2 = rep(p, nrow(tab)))}
+      }
     # tabyl est un data.frame donc on peut mutate
 
     tab %>% rename(Modalites = 1) # pour pouvoir bind
