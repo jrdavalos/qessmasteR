@@ -26,7 +26,7 @@
 #' @importFrom rlang enquos
 #' @importFrom tibble tibble rownames_to_column
 #' @importFrom purrr map_dfr
-#' @importFrom dplyr %>% mutate rename if_else select case_when
+#' @importFrom dplyr %>% mutate mutate_if rename if_else select case_when
 #' @importFrom questionr wtd.table
 #' @importFrom janitor %>% tabyl adorn_totals adorn_percentages adorn_pct_formatting adorn_ns as_tabyl chisq.test
 
@@ -51,7 +51,6 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
 
       tab <- wtd.table(var2, var_princ2, weights = pond, normwt = norm_pond, useNA = nr) %>%
         as.data.frame.array %>%
-        round(0) %>% # arrondi de la ponderation
         rownames_to_column() %>% # modalites
         as_tabyl() # on retombe sur le meme cas que plus haut donc idem
     }
@@ -60,8 +59,15 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
   transformation <- function(tabl){
     if (p.val) {
       p <- janitor::chisq.test(tabl)$p.value
-      if (p > sign) {cram.v <- FALSE}
-      p <- format(p, digits = 2, scientific = ifelse(p < 0.001, T, F))
+      if (!is.na(p)) {
+        if (p > sign) {cram.v <- FALSE}
+        p <- format(p, digits = 2, scientific = ifelse(p < 0.001, T, F))
+        }
+      else {
+        cram.v <- FALSE
+        p <- ""
+        message("Pas de p-value calculable : verifier les variables et leurs effectifs")
+        }
       }
     if (cram.v) {
       n <- sum(tabl[2:ncol(tabl)])
@@ -70,15 +76,17 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
       v <- as.numeric(sqrt(chid/(n * dim))) %>% format(digits = 2) %>% paste("V =", .)
       }
 
-    tab <- tabl %>%
+    tab_tot <- tabl %>%
       adorn_totals(where = tot, # les totaux a mettre
                    name = case_when(pct_ligne ~ c("Ensemble", "Total"),
-                                    TRUE      ~ c("Total", "Ensemble"))) %>%
+                                    TRUE      ~ c("Total", "Ensemble"))) %>% 
+      adorn_rounding(0) # pour arrondir les valeurs ponderees
+    tab <- tab_tot %>%
       # les noms des totaux selon si pct en ligne ou en colonne
       adorn_percentages(denominator = ifelse(pct_ligne, "row", "col")) %>%
       adorn_pct_formatting(digits = nb, rounding = "half up", affix_sign = pourcent) #decimales
 
-    if (eff) {tab <- tab %>% adorn_ns()} # effectifs sous la forme (n)
+    if (eff) {tab <- tab %>% adorn_ns(ns = tab_tot)} # effectifs sous la forme (n) avec les eff du tot arrondis
     if (p.val) {
       if (cram.v) {tab <- tab %>% mutate(Khi2 = c(p, rep(v, nrow(tab) - 1)))}
       else {tab <- tab %>% mutate(Khi2 = rep(p, nrow(tab)))}
@@ -94,3 +102,4 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
   # map_dfr applique la fonction tableau() a chaque element de la liste
   # a chaque tableau produit, le nom des variables est ajoute sur la gauche
 }
+
