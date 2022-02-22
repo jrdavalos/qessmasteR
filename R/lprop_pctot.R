@@ -8,7 +8,7 @@
 #' @param y variable a mettre en colonne
 #' @param pond variable de pondération (facultatif), doit absolument être écrit sous la forme data$pond
 #' @param tot_pond logique. Si FALSE (valeur par deéfaut) alors les effectifs ne sont pas pondérés.
-#' @param norm_pond logique. Si TRUE alors normalise les poids de la pondération (la somme des poids est alors égale a la somme des effectifs). FALSE est la valeur par défaut.
+#' @param norm_pond TRUE par défaut. Si TRUE alors normalise les poids de la pondération (la somme des poids est alors égale a la somme des effectifs).
 #' @param num logique. Si TRUE (valeur par défaut) alors les effectifs sont affiches
 #' @param ch nombre de chiffres apres la virgule
 #' @param nr comportements vis-a-vis des NA (voir table())

@@ -27,7 +27,7 @@ lprop_pctot(
 
 \item{tot_pond}{logique. Si FALSE (valeur par deéfaut) alors les effectifs ne sont pas pondérés.}
 
-\item{norm_pond}{logique. Si TRUE alors normalise les poids de la pondération (la somme des poids est alors égale a la somme des effectifs). FALSE est la valeur par défaut.}
+\item{norm_pond}{TRUE par défaut. Si TRUE alors normalise les poids de la pondération (la somme des poids est alors égale a la somme des effectifs).}
 
 \item{num}{logique. Si TRUE (valeur par défaut) alors les effectifs sont affiches}
 

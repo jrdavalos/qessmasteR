@@ -18,7 +18,24 @@ multi_croise(
   eff = TRUE,
   pourcent = FALSE,
   pond = NULL,
-  norm_pond = FALSE
+  norm_pond = TRUE
+)
+
+multi_croise(
+  data,
+  var_princ,
+  ...,
+  NR = FALSE,
+  pct_ligne = TRUE,
+  nb = 1,
+  p.val = FALSE,
+  cram.v = FALSE,
+  sign = 0.05,
+  tot = c("row", "col"),
+  eff = TRUE,
+  pourcent = FALSE,
+  pond = NULL,
+  norm_pond = TRUE
 )
 }
 \arguments{
@@ -48,14 +65,20 @@ multi_croise(
 
 \item{pond}{variable de pondération (facultatif), doit absolument être écrit sous la forme data$pond}
 
-\item{norm_pond}{logique. Si TRUE alors normalise les poids de la pondération (la somme des poids est alors égale a la somme des effectifs). FALSE est la valeur par défaut.}
+\item{norm_pond}{TRUE par défaut. Si TRUE alors normalise les poids de la pondération (la somme des poids est alors égale a la somme des effectifs).}
 }
 \value{
+Un tabyl data.frame regroupant tous les tableaux croisés avec pourcentages et effectifs. Si les pourcentages sont en ligne et que les totaux sont activés alors la ligne de total est nommée "Ensemble" et la colonne de total est nommée "Total" et inversement pour les pourcentages en colonne.
+
 Un tabyl data.frame regroupant tous les tableaux croisés avec pourcentages et effectifs. Si les pourcentages sont en ligne et que les totaux sont activés alors la ligne de total est nommée "Ensemble" et la colonne de total est nommée "Total" et inversement pour les pourcentages en colonne.
 }
 \description{
 Permet d'obtenir un tableau croisant une variable d'intérêt avec une liste d'autres variables.
+
+Permet d'obtenir un tableau croisant une variable d'intérêt avec une liste d'autres variables.
 }
 \author{
+Julio Ricardo Davalos
+
 Julio Ricardo Davalos
 }
