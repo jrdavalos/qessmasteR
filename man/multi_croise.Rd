@@ -20,23 +20,6 @@ multi_croise(
   pond = NULL,
   norm_pond = TRUE
 )
-
-multi_croise(
-  data,
-  var_princ,
-  ...,
-  NR = FALSE,
-  pct_ligne = TRUE,
-  nb = 1,
-  p.val = FALSE,
-  cram.v = FALSE,
-  sign = 0.05,
-  tot = c("row", "col"),
-  eff = TRUE,
-  pourcent = FALSE,
-  pond = NULL,
-  norm_pond = TRUE
-)
 }
 \arguments{
 \item{data}{base de données}
@@ -69,16 +52,10 @@ multi_croise(
 }
 \value{
 Un tabyl data.frame regroupant tous les tableaux croisés avec pourcentages et effectifs. Si les pourcentages sont en ligne et que les totaux sont activés alors la ligne de total est nommée "Ensemble" et la colonne de total est nommée "Total" et inversement pour les pourcentages en colonne.
-
-Un tabyl data.frame regroupant tous les tableaux croisés avec pourcentages et effectifs. Si les pourcentages sont en ligne et que les totaux sont activés alors la ligne de total est nommée "Ensemble" et la colonne de total est nommée "Total" et inversement pour les pourcentages en colonne.
 }
 \description{
 Permet d'obtenir un tableau croisant une variable d'intérêt avec une liste d'autres variables.
-
-Permet d'obtenir un tableau croisant une variable d'intérêt avec une liste d'autres variables.
 }
 \author{
-Julio Ricardo Davalos
-
 Julio Ricardo Davalos
 }
