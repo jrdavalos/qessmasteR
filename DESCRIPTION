@@ -24,7 +24,8 @@ Imports:
   stringr,
   tibble,
   purrr,
-  janitor
+  janitor,
+  gmodels
 Depends: 
     R (>= 3.4)
 URL: https://github.com/jrdavalos/qessmasteR

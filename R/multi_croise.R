@@ -22,13 +22,12 @@
 #' @return Un tabyl data.frame regroupant tous les tableaux croisés avec pourcentages et effectifs. Si les pourcentages sont en ligne et que les totaux sont activés alors la ligne de total est nommée "Ensemble" et la colonne de total est nommée "Total" et inversement pour les pourcentages en colonne.
 #' @export
 #'
-#' @importFrom stats na.omit as.formula lm update.formula
 #' @importFrom rlang enquos
 #' @importFrom tibble tibble rownames_to_column
 #' @importFrom purrr map_dfr
 #' @importFrom dplyr %>% mutate mutate_if rename if_else select case_when
 #' @importFrom questionr wtd.table
-#' @importFrom janitor %>% tabyl adorn_totals adorn_percentages adorn_pct_formatting adorn_ns as_tabyl chisq.test
+#' @importFrom janitor %>% tabyl adorn_totals adorn_percentages adorn_pct_formatting adorn_ns adorn_rounding as_tabyl chisq.test
 
 multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb = 1, p.val = FALSE,
                          cram.v = FALSE, sign = 0.05, tot = c("row", "col"), eff = TRUE, pourcent = FALSE,
