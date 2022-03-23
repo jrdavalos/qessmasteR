@@ -55,12 +55,6 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
         mutate(Personne = is.na(Modalites),
                Modalites = as.character(Modalites))
     )
-    if (sum(is.na(tab$`IC-`)) > 0) {
-      warning(paste("Pas d'ecart-type ou d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une seule reponse pour la variable d'interet."), call. = FALSE)
-    }
-    if (sum(is.na(tab$Moyenne)) > 0) {
-      warning(paste("Pas de moyenne calculee : la variable" , nom, "comporte au moins une modalite avec que des non reponses pour la variable d'interet."), call. = FALSE)
-    }
     if (!moy) tab <- tab %>% select(-Moyenne)
     if (!sd) tab <- tab %>% select(-`Ecart-type`)
     if (!ic) tab <- tab %>% select(-c(`IC-`, `IC+`))
@@ -70,7 +64,7 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
     if (!eff) tab <- tab %>% select(-c(N, `N avec NR`))
     if (eff == TRUE & eff_na == FALSE) tab <- tab %>% select(-`N avec NR`)
     if (!NR) tab <- tab %>% filter(!Personne)
-        if (sum(is.na(tab$`IC-`)) > 0) {
+    if (sum(is.na(tab$`IC-`)) > 0) {
       warning(paste("Pas d'ecart-type ou d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une seule reponse pour la variable d'interet."), call. = FALSE)
     }
     if (sum(is.na(tab$Moyenne)) > 0) {
