@@ -2,7 +2,7 @@
 % Please edit documentation in R/multi_quanti.R
 \name{multi_quanti}
 \alias{multi_quanti}
-\title{multi_croise}
+\title{multi_quanti}
 \usage{
 multi_quanti(
   data,
@@ -12,6 +12,7 @@ multi_quanti(
   sd = TRUE,
   ic = TRUE,
   ic_seuil = 0.05,
+  nb = 2,
   med = TRUE,
   quart = TRUE,
   minmax = TRUE,
@@ -31,9 +32,11 @@ multi_quanti(
 
 \item{sd}{TRUE par défaut. Écart-type par modalité.}
 
-\item{ic}{TRUE par défaut. Intervalle de confiance de la moyenne par modalité.}
+\item{ic}{TRUE par défaut. Intervalle de confiance de la moyenne par modalité. N'apparait pas si moy = FALSE}
 
 \item{ic_seuil}{risque de première espèce pour l'intervalle de confiance.}
+
+\item{nb}{nombre de décimales pour la moyenne, l'écart-type et l'intervalle de confiance.}
 
 \item{med}{TRUE par défaut. Médiane par modalité.}
 
@@ -43,12 +46,12 @@ multi_quanti(
 
 \item{eff}{TRUE par défaut. Effectifs par modalité.}
 
-\item{eff_na}{FALSE par défaut. Effectifs par modalité en comptant les non-réponses à la place des effectifs.}
+\item{eff_na}{FALSE par défaut. Effectifs par modalité en comptant les non-réponses à la place des effectifs. N'apparait pas si eff = FALSE}
 
-\item{NR}{TRUE par défaut. Supprime les modalités où il n'y a que des non-réponses.}
+\item{NR}{TRUE par défaut. Supprime les non-réponses}
 }
 \value{
-Un tabyl data.frame regroupant tous les tableaux croisés avec pourcentages et effectifs. Si les pourcentages sont en ligne et que les totaux sont activés alors la ligne de total est nommée "Ensemble" et la colonne de total est nommée "Total" et inversement pour les pourcentages en colonne.
+Un tibble avec en colonne les indicateurs synthétiques de la variable d'intérêt selon les modalités des variables catégorielles choisies.
 }
 \description{
 Permet d'obtenir un tableau détaillant une variable quantitative en fonction d'une liste de variables catégorielles.

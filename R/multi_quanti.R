@@ -1,4 +1,4 @@
-#' @title multi_croise
+#' @title multi_quanti
 #' @author  Julio Ricardo Davalos
 #'
 #' @description Permet d'obtenir un tableau détaillant une variable quantitative en fonction d'une liste de variables catégorielles.
@@ -8,52 +8,68 @@
 #' @param ... variables catégorielles à croiser avec la variable principale (en lignes)
 #' @param moy TRUE par défaut. Moyenne par modalité.
 #' @param sd TRUE par défaut. Écart-type par modalité.
-#' @param ic TRUE par défaut. Intervalle de confiance de la moyenne par modalité.
+#' @param ic TRUE par défaut. Intervalle de confiance de la moyenne par modalité. N'apparait pas si moy = FALSE
 #' @param ic_seuil risque de première espèce pour l'intervalle de confiance.
+#' @param nb nombre de décimales pour la moyenne, l'écart-type et l'intervalle de confiance.
 #' @param med TRUE par défaut. Médiane par modalité.
 #' @param quart TRUE par défaut. Quartiles Q1 et Q3 par modalité.
 #' @param minmax TRUE par défaut. Minimum et maximum par modalité.
 #' @param eff TRUE par défaut. Effectifs par modalité.
-#' @param eff_na FALSE par défaut. Effectifs par modalité en comptant les non-réponses à la place des effectifs.
-#' @param NR TRUE par défaut. Supprime les modalités où il n'y a que des non-réponses.
+#' @param eff_na FALSE par défaut. Effectifs par modalité en comptant les non-réponses à la place des effectifs. N'apparait pas si eff = FALSE
+#' @param NR TRUE par défaut. Supprime les non-réponses
 #'
-#' @return Un tabyl data.frame regroupant tous les tableaux croisés avec pourcentages et effectifs. Si les pourcentages sont en ligne et que les totaux sont activés alors la ligne de total est nommée "Ensemble" et la colonne de total est nommée "Total" et inversement pour les pourcentages en colonne.
+#' @return Un tibble avec en colonne les indicateurs synthétiques de la variable d'intérêt selon les modalités des variables catégorielles choisies.
 #' @export
 #'
 #' @importFrom stats quantile
 #' @importFrom rlang enquos
 #' @importFrom purrr map_dfr
-#' @importFrom dplyr %>% group_by summarise select rename filter
+#' @importFrom dplyr %>% group_by summarise select rename filter n
 #' @importFrom gmodels ci
 
 multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE, ic_seuil = 0.05,
-                         med = TRUE, quart = TRUE, minmax = TRUE, eff = TRUE, eff_na = FALSE, NR = TRUE) {
+                         nb = 2, med = TRUE, quart = TRUE, minmax = TRUE, eff = TRUE, eff_na = FALSE,
+                         NR = TRUE) {
   if (!moy) ic <- FALSE
   sommaire <- function(var) {
+    test <- data %>% select({{var}}) %>% unlist
+    nom <- data %>% select({{var}}) %>% names
+    if (is.numeric(test)) {
+      warning(paste("La variable" , nom, "n'est pas categorielle mais numerique !"), call. = FALSE)
+    }
     suppressWarnings(
       tab <- data %>%
         group_by({{var}}) %>%
-        summarise(Minimum = min({{var_princ}}, na.rm = T),
-                  Maximum = max({{var_princ}}, na.rm = T),
-                  Moyenne = mean({{var_princ}}, na.rm = T),
-                  `Ecart-type` = round(sd({{var_princ}}, na.rm = T), 2),
-                  `IC-` = round(ci({{var_princ}}, alpha = ic_seuil, na.rm = T)[2], 2),
-                  `IC+` = round(ci({{var_princ}}, alpha = ic_seuil, na.rm = T)[3], 2),
-                  Q1 = quantile({{var_princ}}, probs = 0.25, na.rm = T),
-                  Mediane = quantile({{var_princ}}, probs = 0.5, na.rm = T),
-                  Q3 = quantile({{var_princ}}, probs = 0.75, na.rm = T),
-                  N = ifelse(eff_na, n(), sum(!is.na({{var_princ}}))),
-                  Personne = ifelse(is.na(Moyenne), T, F)) %>%
-        rename(Modalites = 1)
+        summarise(Minimum = min({{var_princ}}, na.rm = TRUE),
+                  Maximum = max({{var_princ}}, na.rm = TRUE),
+                  Moyenne = mean({{var_princ}}, na.rm = TRUE),
+                  `Ecart-type` = round(sd({{var_princ}}, na.rm = TRUE), nb),
+                  `IC-` = round(ci({{var_princ}}, alpha = ic_seuil, na.rm = TRUE)[2], nb),
+                  `IC+` = round(ci({{var_princ}}, alpha = ic_seuil, na.rm = TRUE)[3], nb),
+                  Q1 = quantile({{var_princ}}, probs = 0.25, na.rm = TRUE),
+                  Mediane = quantile({{var_princ}}, probs = 0.5, na.rm = TRUE),
+                  Q3 = quantile({{var_princ}}, probs = 0.75, na.rm = TRUE),
+                  N = sum(!is.na({{var_princ}})),
+                  `N avec NR` = n()) %>%
+        rename(Modalites = 1) %>%
+        mutate(Personne = is.na(Modalites),
+               Modalites = as.character(Modalites))
     )
+    if (sum(is.na(tab$`IC-`)) > 0) {
+      warning(paste("Pas d'ecart-type ou d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une seule reponse pour la variable d'interet."), call. = FALSE)
+    }
+    if (sum(is.na(tab$Moyenne)) > 0) {
+      warning(paste("Pas de moyenne calculee : la variable" , nom, "comporte au moins une modalite avec que des non reponses pour la variable d'interet."), call. = FALSE)
+    }
     if (!moy) tab <- tab %>% select(-Moyenne)
     if (!sd) tab <- tab %>% select(-`Ecart-type`)
     if (!ic) tab <- tab %>% select(-c(`IC-`, `IC+`))
     if (!med) tab <- tab %>% select(-Mediane)
     if (!quart) tab <- tab %>% select(-c(Q1, Q3))
     if (!minmax) tab <- tab %>% select(-c(Minimum, Maximum))
-    if (!eff) tab <- tab %>% select(-N)
-    if (NR) tab <- tab %>% filter(!Personne)
+    if (!eff) tab <- tab %>% select(-c(N, `N avec NR`))
+    if (eff == TRUE & eff_na == FALSE) tab <- tab %>% select(-`N avec NR`)
+    if (!NR) tab <- tab %>% filter(!Personne)
     tab %>% select(-Personne)
   }
   list_vars <- rlang::enquos(..., .named = TRUE)
