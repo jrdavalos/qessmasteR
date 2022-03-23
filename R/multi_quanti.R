@@ -30,7 +30,7 @@
 multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE, ic_seuil = 0.05,
                          nb = 2, med = TRUE, quart = TRUE, minmax = TRUE, eff = TRUE, eff_na = FALSE,
                          NR = TRUE) {
-  if (!moy) ic <- FALSE
+  if (!moy) ic <- FALSE; sd <- FALSE
   sommaire <- function(var) {
     test <- data %>% select({{var}}) %>% unlist
     nom <- data %>% select({{var}}) %>% names
@@ -70,6 +70,12 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
     if (!eff) tab <- tab %>% select(-c(N, `N avec NR`))
     if (eff == TRUE & eff_na == FALSE) tab <- tab %>% select(-`N avec NR`)
     if (!NR) tab <- tab %>% filter(!Personne)
+        if (sum(is.na(tab$`IC-`)) > 0) {
+      warning(paste("Pas d'ecart-type ou d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une seule reponse pour la variable d'interet."), call. = FALSE)
+    }
+    if (sum(is.na(tab$Moyenne)) > 0) {
+      warning(paste("Pas de moyenne calculee : la variable" , nom, "comporte au moins une modalite avec que des non reponses pour la variable d'interet."), call. = FALSE)
+    }
     tab %>% select(-Personne)
   }
   list_vars <- rlang::enquos(..., .named = TRUE)
