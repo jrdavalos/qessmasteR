@@ -35,7 +35,7 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
     test <- data %>% select({{var}}) %>% unlist
     nom <- data %>% select({{var}}) %>% names
     if (is.numeric(test)) {
-      warning(paste("La variable" , nom, "n'est pas categorielle mais numerique !"), call. = FALSE)
+      warning(paste("La variable" , nom, "n'est pas categorielle mais numerique !\nTransformee en categorielle."), call. = FALSE)
     }
     suppressWarnings(
       tab <- data %>%
@@ -55,15 +55,15 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
         mutate(Personne = is.na(Modalites),
                Modalites = as.character(Modalites))
     )
-    if (sum(is.na(tab$`IC-`)) > 0) {
-      warning(paste("Pas d'ecart-type ou d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une seule reponse pour la variable d'interet."), call. = FALSE)
-    }
-    if (sum(is.na(tab$Moyenne)) > 0) {
-      warning(paste("Pas de moyenne calculee : la variable" , nom, "comporte au moins une modalite avec que des non reponses pour la variable d'interet."), call. = FALSE)
-    }
-    if (!moy) tab <- tab %>% select(-Moyenne)
     if (!sd) tab <- tab %>% select(-`Ecart-type`)
     if (!ic) tab <- tab %>% select(-c(`IC-`, `IC+`))
+    if ((sd | ic) & sum(is.na(tab$`IC-`)) > 0) {
+      warning(paste("Pas d'ecart-type ou d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une unique reponse au croisement la variable d'interet."), call. = FALSE)
+    }
+    if (!moy) tab <- tab %>% select(-Moyenne)
+    if (moy & sum(is.na(tab$Moyenne)) > 0) {
+      warning(paste("Pas de moyenne calculee : la variable" , nom, "comporte au moins une modalite avec uniquement des non reponses au croisement avec la variable d'interet."), call. = FALSE)
+    }
     if (!med) tab <- tab %>% select(-Mediane)
     if (!quart) tab <- tab %>% select(-c(Q1, Q3))
     if (!minmax) tab <- tab %>% select(-c(Minimum, Maximum))
