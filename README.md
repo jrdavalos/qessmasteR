@@ -1,5 +1,5 @@
 # qessmasteR
-Quelques fonctions simplificatrices pour étudiants en sciences sociales (QESS étant le Master Quantifier en sciences sociales de l'ENS et de l'EHESS). 
+Quelques fonctions simplificatrices pour étudiants, chercheurs et ingénieurs en sciences sociales (QESS étant le Master Quantifier en sciences sociales de l'ENS et de l'EHESS). 
 
 On y trouve pour l'instant :
   - multi_mp() qui sert à réaliser des modèles de probabilité linéaire avec des variables expliquées à plus de deux catégories.
@@ -9,9 +9,9 @@ On y trouve pour l'instant :
   - multi_quanti() qui est comme multi_croise mais avec une variable quantitative en fonction de variables catégorielles, on peut obtenir un ensemble de statistiques synthétiques de la variable quantitative en fonction des catégories des variables catégorielles
 
 En prévision : 
-  - des fonctions de mise en forme de résultats (pour ACM et tableaux)
+  - des fonctions de mise en forme de résultats (pour ACM et tableaux), adaptable en html et LaTeX
 
-L'idée est de faciliter la vie des étudiants dans leurs traitements de données, toute suggestion est la bienvenue ! Par ailleurs, comme le package est (vraiment) tout nouveau, il risque de beaucoup évoluer. Je vous conseille de le réinstaller de temps en temps ou de venir sur cette page pour suivre l'arrivée de nouvelles fonctions.
+L'idée est de faciliter la vie dans les traitements de données, c'est aussi pourquoi la documentation est en français. Toute suggestion est la bienvenue (-> mon adresse mail : davalosjulioricardo@gmail.com) ! Par ailleurs, comme le package est tout récent, il risque de beaucoup évoluer. Je vous conseille de le réinstaller de temps en temps ou de venir sur cette page pour suivre l'arrivée de nouvelles fonctions.
 
 Pour l'installation :
 ```r
