@@ -20,6 +20,8 @@ Imports:
   magrittr,
   questionr,
   dplyr,
+  tidyr,
+  tidyselect,
   rlang,
   stringr,
   tibble,

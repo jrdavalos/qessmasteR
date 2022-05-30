@@ -1,5 +1,5 @@
 #' @title multi_croise
-#' @author  Julio Ricardo Davalos
+#' @author Julio Ricardo Davalos
 #'
 #'
 #' @description Permet d'obtenir un tableau croisant une variable d'intérêt avec une liste d'autres variables.
