@@ -13,7 +13,7 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom tibble rownames_to_column
 #' @importFrom purrr map map_dbl map2
-#' @importFrom dplyr %>% summarise count case_when
+#' @importFrom dplyr %>% summarise count case_when ungroup add_count filter select distinct
 #' @importFrom stringr str_detect
 
 exclure_agd <- function(agd, na = TRUE, modalites = NULL) {
