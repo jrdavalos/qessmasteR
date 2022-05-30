@@ -60,7 +60,7 @@ exclure_agd <- function(agd, na = TRUE, modalites = NULL) {
 
   index <- liste_na * nombres + liste_modalites * nombres
 
-  if (type == "MCA") {index[index != 0]}
+  if (type == "MCA") {return(index[index != 0])}
   if (type == "MFA") {
     index_group <- (map2(agd$call$group.mod, 1:length(agd$call$group.mod),
                          ~ rep(.y, .x)) %>%
