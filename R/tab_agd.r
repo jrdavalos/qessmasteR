@@ -142,7 +142,8 @@ tab_agd <- function(agd, sup_dbl = TRUE, nb = 3) {# creation de tous les tableau
       mutate(across(where(is.numeric), ~ round(.x, nb))) %>%
       relocate(type, variable, modalite, n, pourcentage) %>%
       relocate(ends_with("_group"), .after = last_col()) %>%
-      relocate(matches("groupe"))
+      relocate(matches("groupe")) %>% 
+      filter(!is.na(variable))
 
     if (sup_dbl) {
       resultats_tot %>% mutate(modalite = case_when(str_detect(modalite, ".NA") ~
