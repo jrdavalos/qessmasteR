@@ -63,7 +63,7 @@ tab_agd <- function(agd, sup_dbl = TRUE, nb = 3) {# creation de tous les tableau
       filter(nn > 1) %>%
       select(variable, modalite)
 
-    if (length(var_reco) > 0) {
+    if (nrow(var_reco) > 0) {
       frequences <-  frequences %>%
         mutate(modalite = case_when(variable %in% var_reco$variable & modalite %in% var_reco$modalite ~
                                       case_when(is.na(modalite) ~ paste0(variable, ".NA"),
