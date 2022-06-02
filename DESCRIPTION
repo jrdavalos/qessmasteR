@@ -1,7 +1,7 @@
 Package: qessmasteR
 Date: 2021-03-23
-Title: Fonctions simplificatrices pour étudiants en sciences sociales
-Version: 0.1.0
+Title: Fonctions simplificatrices pour les traitements statistiques en sciences sociales
+Version: 1.0
 Authors@R: 
     c(person(given = "Julio Ricardo",
            family = "Davalos",
@@ -10,7 +10,7 @@ Authors@R:
       person(given = "Kanto",
             family = "Fiaferana",
             role = "aut"))
-Description: Le présent package a vocation d'aller plus vite dans l'utilisation de certaines fonctionnalités redondantes de R pour les étudiants en sciences sociales dans leurs traitements de données.
+Description: Quelques fonctions simplificatrices pour étudiants, chercheurs et ingénieurs en sciences sociales (QESS étant le Master Quantifier en sciences sociales de l'ENS et de l'EHESS).
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -27,7 +27,8 @@ Imports:
   tibble,
   purrr,
   janitor,
-  gmodels
+  gmodels,
+  FactoMineR
 Depends: 
     R (>= 3.4)
 URL: https://github.com/jrdavalos/qessmasteR

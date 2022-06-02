@@ -1,4 +1,4 @@
-#' @title tab_agd
+#' @title tab_quali_agd
 #' @author Julio Ricardo Davalos
 #'
 #' @description Permet d'obtenir un tableau contenant toutes les données de toutes les variables utilisées dans une analyse géométrique des données.
@@ -17,7 +17,7 @@
 #' @importFrom tidyselect starts_with ends_with matches everything
 #' @importFrom stringr str_detect str_extract str_remove
 
-tab_agd <- function(agd, sup_dbl = TRUE, nb = 3) {# creation de tous les tableaux pour les acm
+tab_quali_agd <- function(agd, sup_dbl = TRUE, nb = 3) {# creation de tous les tableaux pour les acm
   type <- class(agd)[1]
 
   if (type == "MCA") {
@@ -25,8 +25,8 @@ tab_agd <- function(agd, sup_dbl = TRUE, nb = 3) {# creation de tous les tableau
     donnees <- get(agd$call$call$X)
     quali.act <- agd$var
     quali.sup <- agd$quali.sup
-  } else if (type == "AFC") {
-    # a finaliser
+  } else if (type == "CA") {
+    message("Pas encore finalise pour les AFC.")
   } else if (type == "MFA") {
     nom_dim <- "comp"
     donnees <- get(agd$call$call$base)
@@ -142,7 +142,7 @@ tab_agd <- function(agd, sup_dbl = TRUE, nb = 3) {# creation de tous les tableau
       mutate(across(where(is.numeric), ~ round(.x, nb))) %>%
       relocate(type, variable, modalite, n, pourcentage) %>%
       relocate(ends_with("_group"), .after = last_col()) %>%
-      relocate(matches("groupe")) %>% 
+      relocate(matches("groupe")) %>%
       filter(!is.na(variable))
 
     if (sup_dbl) {
