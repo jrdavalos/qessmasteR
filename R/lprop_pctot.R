@@ -24,17 +24,18 @@
 #' lprop_pctot(data, age, group, data$weights)
 lprop_pctot <- function(data, x, y, pond = NULL, tot_pond = FALSE, norm_pond = FALSE, num = TRUE, ch = 1, nr = c("no", "ifany", "always")){
   # tableau des pct par ligne
+  if (nr[1] == "always") {d = FALSE} else d = TRUE
   if (is.null(pond)) {# si pas de ponderation alors tableau des effectifs
     tab <- data %>%
       select({{x}},{{y}}) %>%
       table(useNA = nr) %>%
-      lprop(digits = ch, n = TRUE) # oblige de mettre n = TRUE pour calcul des pct
+      lprop(digits = ch, n = TRUE, drop = d) # oblige de mettre n = TRUE pour calcul des pct
   }
   else {# si ponderation alors wtd.table
     tab <- wtd.table(data[, which(colnames(data) == deparse(substitute(x)))] %>% unlist(use.names = FALSE),
                      data[, which(colnames(data) == deparse(substitute(y)))] %>% unlist(use.names = FALSE),
                      weights = pond, normwt = norm_pond, useNA = nr) %>%
-      lprop(digits = ch, n = TRUE)
+      lprop(digits = ch, n = TRUE, drop = d)
   }
   # poids des lignes (pct total)
   lignes <- nrow(tab)
@@ -51,7 +52,7 @@ lprop_pctot <- function(data, x, y, pond = NULL, tot_pond = FALSE, norm_pond = F
       tot_non_pond <- data %>%
         select({{x}},{{y}}) %>%
         table(useNA = nr) %>%
-        lprop(n = TRUE, digits = ch) %>%
+        lprop(n = TRUE, digits = ch, drop = d) %>%
         as.data.frame.array() %>% # pour l'arrondi a l'unite
         select(n) %>%
         unlist(use.names = FALSE)
