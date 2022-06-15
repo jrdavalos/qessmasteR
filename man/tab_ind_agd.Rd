@@ -4,20 +4,18 @@
 \alias{tab_ind_agd}
 \title{tab_ind_agd}
 \usage{
-tab_ind_agd(agd, sup_dbl = TRUE, nb = 3)
+tab_ind_agd(agd, nb = 3)
 }
 \arguments{
 \item{agd}{objet AGD (MCA, MFA, PCA...)}
 
-\item{sup_dbl}{TRUE par défaut. La fonction colle le nom de la variable à la modalité en cas de doublon. Ici, on supprime cette concaténation pour plus de lisibilité dans le tableau final. Peut gêner la lecture dans le cas d'une représentation graphique basée uniquement sur les modalités.}
-
 \item{nb}{nombre de chiffres à conserver pour toutes les statistiques produites.}
 }
 \value{
-Un data.frame comprenant le nom des variables, modalités, si elles sont actives ou supplémentaires ainsi que l'ensemble des données générées par l'AGD (coordonnées, cos2, contributiosn etc.).
+Un data.frame comprenant les coordonnées, contribbutions, cos2 (et inertie intra individuelle pour les AFM) des individus et les modalités de ces individus
 }
 \description{
-Permet d'obtenir un tableau contenant toutes les données de toutes les variables utilisées dans une analyse géométrique des données.
+Permet d'obtenir un tableau contenant toutes les données des individus utilisés dans une analyse géométrique des données.
 }
 \author{
 Julio Ricardo Davalos
