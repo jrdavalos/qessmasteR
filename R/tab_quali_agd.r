@@ -21,15 +21,11 @@ tab_quali_agd <- function(agd, sup_dbl = TRUE, nb = 3) {# creation de tous les t
   type <- class(agd)[1]
 
   if (type == "MCA") {
-    nom_dim <- "dim"
     donnees <- get(agd$call$call$X)
     quali.act <- agd$var
     quali.sup <- agd$quali.sup
     ind.sup <- agd$call$ind.sup
-  } else if (type == "CA") {
-    message("Pas encore finalise pour les AFC.")
   } else if (type == "MFA") {
-    nom_dim <- "comp"
     donnees <- get(agd$call$call$base)
     quali.act <- agd$quali.var
     quali.sup <- agd$quali.var.sup
