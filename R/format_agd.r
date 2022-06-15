@@ -9,7 +9,7 @@
 #' @return Un data.frame de même nature que la base de données utilisée.
 #'
 #' @importFrom tidyr pivot_longer
-#' @importFrom dplyr %>% mutate across group_by ungroup add_count filter select case_when distinct cur_column
+#' @importFrom dplyr %>% mutate across add_count filter select case_when distinct cur_column
 #' @importFrom tidyselect everything matches
 
 #'
@@ -18,14 +18,12 @@ format_agd <- function(data, ttes_var = FALSE) {
   else {
     var <- data %>%
       pivot_longer(everything(), names_to = "variables", values_to = "modalites") %>%
-      group_by(variables, modalites) %>%
-      summarise() %>%
-      ungroup() %>%
+      count(variables, modalites) %>%
       add_count(modalites) %>%
       filter(n > 1) %>%
       select(variables) %>%
       distinct() %>%
-      as.vector()
+      unlist(use.names = F)
   }
   data %>% mutate(across(matches(var), ~ case_when(!is.na(.x) ~ paste(cur_column(), .x))))
 }
