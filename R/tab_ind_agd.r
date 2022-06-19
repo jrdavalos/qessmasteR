@@ -45,6 +45,14 @@ tab_ind_agd <- function(agd, nb = 3) {# creation de tous les tableaux pour les a
       rename_all(~ paste0("Dim", str_extract(.x, "\\d+"), "_inertie")) %>%
       rownames_to_column("ID")
 
+    coord_part <- as.data.frame(AFM_volonte_sNA$ind$coord.partiel) %>%
+      rename_all(~ paste0("Dim", str_extract(.x, "\\d+"), "_coord_part")) %>%
+      rownames_to_column("ID") %>%
+      mutate(Groupe = str_split_fixed(ID, "\\.", 2)[,2],
+             ID = str_split_fixed(ID, "\\.", 2)[,1])
+    #bind les trucs en changeant les prefixes
+    coord_part <- full_join(coord_part %>% filter(Groupe == agd$call$name.group[-agd$call$num.group.sup]))
+
     ind_actifs <- right_join(ind_actifs, inertie, by = "ID")
   }
 
