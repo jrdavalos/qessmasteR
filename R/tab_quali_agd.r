@@ -13,7 +13,7 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom tibble rownames_to_column
 #' @importFrom purrr map map_dbl map2
-#' @importFrom dplyr %>% rename select mutate left_join bind_cols bind_rows rename_all rename_with group_by count ungroup add_count filter case_when right_join relocate across last_col
+#' @importFrom dplyr %>% rename select mutate left_join bind_cols bind_rows rename_all rename_with group_by count ungroup add_count filter case_when right_join relocate across last_col distinct
 #' @importFrom tidyselect starts_with ends_with matches everything
 #' @importFrom stringr str_detect str_extract str_remove
 
@@ -30,7 +30,7 @@ tab_quali_agd <- function(agd, sup_dbl = TRUE, nb = 3) {# creation de tous les t
     quali.act <- agd$quali.var
     quali.sup <- agd$quali.var.sup
     ind.sup <- agd$call$ind.sup
-    groupes <- agd$summary.quali %>%
+    groupes <- agd$summary.quali %>% # donnees concernant les groupes
       rename(groupe = group) %>%
       select(variable, modalite, groupe) %>%
       mutate(groupe = agd$call$name.group[groupe]) %>%
@@ -61,15 +61,16 @@ tab_quali_agd <- function(agd, sup_dbl = TRUE, nb = 3) {# creation de tous les t
     add_count(modalite, name = "nn") %>%
     filter(nn > 1) %>%
     select(variable, modalite)
-  if (nrow(var_reco) > 0) {
+  if (nrow(var_reco) > 0) {# on renomme les modalites quand c'est en double en var_mod ou var.NA
     frequences <-  frequences %>%
-      mutate(modalite = case_when(variable %in% var_reco$variable & modalite %in% var_reco$modalite ~
-                                    case_when(is.na(modalite) ~ paste0(variable, ".NA"),
-                                              TRUE ~ paste(variable, modalite, sep = "_")),
+      mutate(modalite = case_when(variable %in% var_reco$variable ~ case_when(is.na(modalite) ~ paste0(variable, ".NA"),
+                                                                              TRUE ~ paste(variable, modalite, sep = "_")),
                                    TRUE ~ modalite))
   }
   if (type == "MFA") {
-    frequences <- groupes %>% left_join(frequences, by = c("variable", "modalite"))
+    frequences <- frequences %>%
+      left_join(groupes %>% select(-modalite) %>% distinct(), by = c("variable")) %>% # on ajoute les donnees des groupes
+      filter(modalite %in% groupes$modalite) # on garde que les actives
   }
   coordonnees <- as.data.frame(quali.act$coord) %>%  # coordonnee de chaque modalite sur chaque axe
     rename_all(~ paste0("Dim", str_extract(.x, "\\d+"), "_coord")) %>%
@@ -125,7 +126,7 @@ tab_quali_agd <- function(agd, sup_dbl = TRUE, nb = 3) {# creation de tous les t
     relocate(ends_with("_group"), .after = last_col()) %>%
     relocate(matches("groupe")) %>%
     filter(!is.na(variable))
-  if (sup_dbl) {
+  if (sup_dbl) {# pour virer les noms de modalite moches
     resultats_tot %>% mutate(modalite = case_when(str_detect(modalite, ".NA") ~
                                                     str_remove(modalite, paste0(variable, ".")),
                                                    TRUE ~ str_remove(modalite, paste0(variable, "_"))))
