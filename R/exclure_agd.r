@@ -60,7 +60,7 @@ exclure_agd <- function(agd, na = TRUE, modalites = NULL) {
   liste_modalites <- noms %in% modalites
 
   if (na) {
-    liste_na <- str_detect(noms, "NA") & !(noms %in% modalites)
+    liste_na <- str_detect(noms, "NA") & !liste_modalites
   } else liste_na <- rep(FALSE, length(noms))
 
   index <- liste_na * nombres + liste_modalites * nombres
@@ -68,9 +68,8 @@ exclure_agd <- function(agd, na = TRUE, modalites = NULL) {
   if (type == "MCA") {return(index[index != 0])}
   if (type == "MFA") {
     index_group <- (map2(agd$call$group.mod, 1:length(agd$call$group.mod),
-                         ~ rep(.y, .x)) %>%
-                      unlist()) * (index != 0)
+                         ~ rep(.y, .x)) %>% unlist()) * (index != 0)
 
-    split(index, index_group)[-1] %>% `names<-`(agd$call$name.group)
+    map(1:length(agd$call$group.mod), ~split(index, index_group)[-1][[as.character(.x)]]) %>% `names<-`(agd$call$name.group)
   }
 }
