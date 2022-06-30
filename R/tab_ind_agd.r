@@ -102,7 +102,6 @@ tab_ind_agd <- function(agd, nb = 3) {# creation de tous les tableaux pour les a
 
   ind_actifs %>%
     bind_rows(ind_sup) %>% # fusion des deux grands tableaux
-    select(-ID) %>%
     mutate(across(where(is.numeric), ~ round(.x, nb))) %>%
-    relocate(starts_with("Dim"), type)
+    relocate(ID, starts_with("Dim"), type)
 }
