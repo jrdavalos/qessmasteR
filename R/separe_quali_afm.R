@@ -8,7 +8,7 @@
 #' @param nb nombre de chiffres à conserver pour toutes les statistiques produites.
 #' @param act_uniq FALSE par défaut. Est-ce qu'on doit extraire seulement les analyses factorielles actives ?
 #'
-#' @return Un data.frame comprenant le nom des variables, modalités, si elles sont actives ou supplémentaires ainsi que l'ensemble des données générées par l'AGD (coordonnées, cos2, contributiosn etc.).
+#' @return Un data.frame comprenant le nom des variables, modalités, si elles sont actives ou supplémentaires ainsi que l'ensemble des données générées par les AGD de l'AFM (coordonnées, cos2, contributiosn etc.).
 #' @export
 #'
 #' @importFrom purrr map
@@ -30,7 +30,7 @@ separe_quali_afm <- function(afm, sup_dbl = TRUE, nb = 3, act_uniq = FALSE) {
   groupes <- c(0, cumsum(afm$call$group))
 
   extraire <- function(groupe) {
-    vars_index <- (1 + groupes[groupe]):groupes[groupe + 1]
+    vars_index <- (1 + groupes[groupe]):groupes[groupe + 1]# on prend la 1ere et la derniere modalite du groupe
     assign("aux.base", base[, vars_index] %>% # on recode pour avoir toutes les modalites comme il faut
              mutate(across(matches(var_reco), ~ case_when(!is.na(.x) ~ paste(cur_column(), .x, sep = "_"),
                                                           TRUE ~ paste0(cur_column(), ".NA")))), envir = globalenv())
@@ -43,8 +43,7 @@ separe_quali_afm <- function(afm, sup_dbl = TRUE, nb = 3, act_uniq = FALSE) {
     num_groupes <- num_groupes[-afm$call$num.group.sup]
   }
   if (exists("aux.base", envir = globalenv())) {assign("baseaunomimpossiblegenrevraiment123456789", aux.base, envir = globalenv())}
-  res <- map(num_groupes, ~extraire(.x))
-  names(res) <- names(afm$separate.analyses)[num_groupes]
+  res <- map_dfr(setNames(num_groupes, names(afm$separate.analyses)[num_groupes]), ~extraire(.x), .id = "groupe")
   rm(aux.base, envir = globalenv())
   if (exists("baseaunomimpossiblegenrevraiment123456789", envir = globalenv())) {
     assign("aux.base", baseaunomimpossiblegenrevraiment123456789, envir = globalenv())
