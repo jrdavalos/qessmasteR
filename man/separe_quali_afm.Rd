@@ -13,13 +13,13 @@ separe_quali_afm(afm, sup_dbl = TRUE, nb = 3, act_uniq = FALSE)
 
 \item{nb}{nombre de chiffres à conserver pour toutes les statistiques produites.}
 
-\item{act_uniq}{FALSE par défaut. Est-ce qu'on doit extraire seulement les analyses factorielles actives ?}
+\item{act_uniq}{FALSE par défaut. Doit-on extraire seulement les analyses factorielles actives ?}
 }
 \value{
 Un data.frame comprenant le nom des variables, modalités, si elles sont actives ou supplémentaires ainsi que l'ensemble des données générées par les AGD de l'AFM (coordonnées, cos2, contributiosn etc.).
 }
 \description{
-Permet d'extraire la liste des analyses séparées d'une analyse factorielle multiple.
+Permet d'extraire les analyses séparées des variables d'une analyse factorielle multiple.
 }
 \author{
 Julio Ricardo Davalos

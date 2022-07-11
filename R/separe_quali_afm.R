@@ -1,12 +1,12 @@
 #' @title separe_quali_afm
 #' @author Julio Ricardo Davalos
 #'
-#' @description Permet d'extraire la liste des analyses séparées d'une analyse factorielle multiple.
+#' @description Permet d'extraire les analyses séparées des variables d'une analyse factorielle multiple.
 #'
 #' @param afm objet MFA
 #' @param sup_dbl TRUE par défaut. La fonction colle le nom de la variable à la modalité en cas de doublon. Ici, on supprime cette concaténation pour plus de lisibilité dans le tableau final. Peut gêner la lecture dans le cas d'une représentation graphique basée uniquement sur les modalités.
 #' @param nb nombre de chiffres à conserver pour toutes les statistiques produites.
-#' @param act_uniq FALSE par défaut. Est-ce qu'on doit extraire seulement les analyses factorielles actives ?
+#' @param act_uniq FALSE par défaut. Doit-on extraire seulement les analyses factorielles actives ?
 #'
 #' @return Un data.frame comprenant le nom des variables, modalités, si elles sont actives ou supplémentaires ainsi que l'ensemble des données générées par les AGD de l'AFM (coordonnées, cos2, contributiosn etc.).
 #' @export
