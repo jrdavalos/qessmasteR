@@ -17,35 +17,26 @@
 
 separe_ind_afm <- function(afm, nb = 3, act_uniq = FALSE) {
   if (class(afm)[1] != "MFA") {stop("Pas objet AFM")}
-  base <- get(afm$call$call$base)
-  var_reco <- base %>% # on doit savoir quelles modalites vont apparaitre avec leur variable
-    pivot_longer(everything(), names_to = "variable", values_to = "modalite") %>% # prend les modalite s
-    count(variable, modalite) %>% # compte
-    add_count(modalite, name = "nn") %>%
-    filter(nn > 1) %>%
-    select(variable) %>%
-    distinct() %>%
-    unlist(use.names = F)
   groupes <- c(0, cumsum(afm$call$group))
-
-  extraire <- function(groupe) {
-    vars_index <- (1 + groupes[groupe]):groupes[groupe + 1]# on prend la 1ere et la derniere modalite du groupe
-    assign("aux.base", base[, vars_index] %>% # on recode pour avoir toutes les modalites comme il faut
-             mutate(across(matches(var_reco), ~ case_when(!is.na(.x) ~ paste(cur_column(), .x, sep = "_"),
-                                                          TRUE ~ paste0(cur_column(), ".NA")))), envir = globalenv())
-    return(qessmasteR::tab_ind_agd(afm$separate.analyses[[groupe]], nb = nb))
-  }
-
   num_groupes <- 1:length(afm$separate.analyses)
 
   if (act_uniq) {
     num_groupes <- num_groupes[-afm$call$num.group.sup]
   }
-  if (exists("aux.base", envir = globalenv())) {assign("baseaunomimpossiblegenrevraiment123456789", aux.base, envir = globalenv())}
-  res <- map_dfr(setNames(num_groupes, names(afm$separate.analyses)[num_groupes]), ~extraire(.x), .id = "groupe")
+
+  if (exists("aux.base", envir = globalenv())) {
+    assign("baseaunomimpossiblegenrevraiment123456789", aux.base, envir = globalenv())
+  }
+
+  aux.base <- assign("aux.base", get(afm$call$call$base), envir = globalenv())
+  res <- map_dfr(setNames(num_groupes, names(afm$separate.analyses)[num_groupes]),
+                 ~qessmasteR::tab_ind_agd(afm$separate.analyses[[.x]], nb = nb), .id = "groupe")
   rm(aux.base, envir = globalenv())
+
   if (exists("baseaunomimpossiblegenrevraiment123456789", envir = globalenv())) {
     assign("aux.base", baseaunomimpossiblegenrevraiment123456789, envir = globalenv())
-    rm(baseaunomimpossiblegenrevraiment123456789, envir = globalenv())}
+    rm(baseaunomimpossiblegenrevraiment123456789, envir = globalenv())
+  }
+
   return(res)
 }
