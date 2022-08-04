@@ -12,7 +12,7 @@
 #'
 #' @importFrom purrr map
 #' @importFrom tidyr pivot_longer
-#' @importFrom dplyr %>% mutate across count add_count filter select case_when distinct cur_column
+#' @importFrom dplyr %>% mutate across count add_count filter select case_when distinct cur_column relocate
 #' @importFrom tidyselect everything matches
 
 separe_ind_afm <- function(afm, nb = 3, act_uniq = FALSE) {
@@ -38,5 +38,7 @@ separe_ind_afm <- function(afm, nb = 3, act_uniq = FALSE) {
     rm(baseaunomimpossiblegenrevraiment123456789, envir = globalenv())
   }
 
-  return(res)
+  res %>%
+    relocate(groupe, .after = type) %>%
+    arrange(as.numeric(ID))
 }

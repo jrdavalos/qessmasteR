@@ -48,21 +48,15 @@ tab_ind_agd <- function(agd, nb = 3) {# creation de tous les tableaux pour les a
     coord_part <- as.data.frame(agd$ind$coord.partiel) %>%
       rename_all(~ paste0("Dim", str_extract(.x, "\\d+"), "_coord_part")) %>%
       rownames_to_column("ID") %>%
-      mutate(Groupe = str_split_fixed(ID, "\\.", 2)[,2],
+      mutate(groupe = str_split_fixed(ID, "\\.", 2)[,2],
              ID = str_split_fixed(ID, "\\.", 2)[,1])
-    noms_groupes <- agd$call$name.group[-agd$call$num.group.sup]
-    coord_part <- map_dfc(1:length(noms_groupes), ~coord_part %>%
-                            filter(Groupe == noms_groupes[.x]) %>%
-                            `colnames<-`(paste(colnames(.), .x, sep = "_"))) %>%
-      rename(ID = ID_1) %>%
-      select(ID, contains(paste0("_coord_part_", 1:length(noms_groupes))))
 
     ind_actifs <- ind_actifs %>%
       right_join(inertie, by = "ID") %>%
       right_join(coord_part, by = "ID")
   }
 
-  ind_actifs <- ind_actifs %>% mutate(type = "Actifs")
+  ind_actifs <- ind_actifs %>% mutate(type = "Actif")
 
   # variable sup
   coordonnees_sup <- as.data.frame(agd$ind.sup$coord) %>%
@@ -78,30 +72,26 @@ tab_ind_agd <- function(agd, nb = 3) {# creation de tous les tableaux pour les a
     right_join(cos2_sup, by = "ID")
 
   if (type == "MFA") {
-    inertie_sup <- as.data.frame(agd$ind.sup$within.inertia) %>%
-      rename_all(~ paste0("Dim", str_extract(.x, "\\d+"), "_inertie")) %>%
-      rownames_to_column("ID")
-
     coord_part_sup <- as.data.frame(agd$ind.sup$coord.partiel) %>%
       rename_all(~ paste0("Dim", str_extract(.x, "\\d+"), "_coord_part")) %>%
       rownames_to_column("ID") %>%
-      mutate(Groupe = str_split_fixed(ID, "\\.", 2)[,2],
+      mutate(groupe = str_split_fixed(ID, "\\.", 2)[,2],
              ID = str_split_fixed(ID, "\\.", 2)[,1])
-    coord_part_sup <- map_dfc(1:length(noms_groupes), ~coord_part_sup %>%
-                                filter(Groupe == noms_groupes[.x]) %>%
-                                `colnames<-`(paste(colnames(.), .x, sep = "_"))) %>%
-      rename(ID = ID_1) %>%
-      select(ID, contains(paste0("_coord_part_", 1:length(noms_groupes))))
 
     ind_sup <- ind_sup %>%
-      right_join(inertie_sup, by = "ID") %>%
       right_join(coord_part_sup, by = "ID")
   }
 
   ind_sup <- ind_sup %>% mutate(type = "Supplementaire")
 
-  ind_actifs %>%
+  ind_tot <- ind_actifs %>%
     bind_rows(ind_sup) %>% # fusion des deux grands tableaux
     mutate(across(where(is.numeric), ~ round(.x, nb))) %>%
-    relocate(ID, starts_with("Dim"), type)
+    relocate(type, ID, starts_with("Dim"))
+
+  if (type == "MFA") {
+    ind_tot <- ind_tot %>% relocate(groupe, .after = type)
+  }
+
+  ind_tot
 }
