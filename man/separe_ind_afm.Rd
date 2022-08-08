@@ -4,7 +4,7 @@
 \alias{separe_ind_afm}
 \title{separe_ind_afm}
 \usage{
-separe_ind_afm(afm, nb = 3, act_uniq = FALSE)
+separe_ind_afm(afm, nb = Inf, act_uniq = FALSE)
 }
 \arguments{
 \item{afm}{objet MFA}

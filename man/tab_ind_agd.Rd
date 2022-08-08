@@ -4,12 +4,14 @@
 \alias{tab_ind_agd}
 \title{tab_ind_agd}
 \usage{
-tab_ind_agd(agd, nb = 3)
+tab_ind_agd(agd, nb = Inf, id = NULL)
 }
 \arguments{
 \item{agd}{objet AGD (MCA, MFA, PCA...)}
 
 \item{nb}{nombre de chiffres à conserver pour toutes les statistiques produites.}
+
+\item{id}{vecteur contenant les identifiants des individus dans la base de données originale (facultatif). Doit être dans le même ordre que les individus de la base de données de l'AGD.}
 }
 \value{
 Un data.frame comprenant les coordonnées, contribbutions, cos2 (et inertie intra individuelle pour les AFM) des individus et les modalités de ces individus

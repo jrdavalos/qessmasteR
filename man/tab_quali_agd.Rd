@@ -4,7 +4,7 @@
 \alias{tab_quali_agd}
 \title{tab_quali_agd}
 \usage{
-tab_quali_agd(agd, sup_dbl = TRUE, nb = 3)
+tab_quali_agd(agd, sup_dbl = TRUE, nb = Inf)
 }
 \arguments{
 \item{agd}{objet AGD (MCA, MFA, PCA...)}

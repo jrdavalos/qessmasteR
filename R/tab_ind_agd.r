@@ -5,6 +5,7 @@
 #'
 #' @param agd objet AGD (MCA, MFA, PCA...)
 #' @param nb nombre de chiffres à conserver pour toutes les statistiques produites.
+#' @param id vecteur contenant les identifiants des individus dans la base de données originale (facultatif). Doit être dans le même ordre que les individus de la base de données de l'AGD.
 #'
 #' @return Un data.frame comprenant les coordonnées, contribbutions, cos2 (et inertie intra individuelle pour les AFM) des individus et les modalités de ces individus
 #' @export
@@ -14,7 +15,7 @@
 #' @importFrom tidyselect starts_with
 #' @importFrom stringr str_extract
 
-tab_ind_agd <- function(agd, nb = 3) {# creation de tous les tableaux pour les acm
+tab_ind_agd <- function(agd, nb = Inf, id = NULL) {# creation de tous les tableaux pour les acm
   type <- class(agd)[1]
 
   if (type == "MCA") {
@@ -86,11 +87,26 @@ tab_ind_agd <- function(agd, nb = 3) {# creation de tous les tableaux pour les a
 
   ind_tot <- ind_actifs %>%
     bind_rows(ind_sup) %>% # fusion des deux grands tableaux
-    mutate(across(where(is.numeric), ~ round(.x, nb))) %>%
     relocate(type, ID, starts_with("Dim"))
 
   if (type == "MFA") {
     ind_tot <- ind_tot %>% relocate(groupe, .after = type)
+  }
+
+  if (!is.null(id)) {
+    if (!is.vector(id)) {
+      stop("id doit etre un vecteur.")
+    }
+    if (nrow(ind_tot) %% length(id) != 0) {
+      nb_id <- length(unique(ind_tot$ID))
+      if (length(id) > nb_id) {
+        stop(paste("id comporte", length(id) - nb_id, "elements en trop."))
+      }
+      if (length(id) < nb_id) {
+        stop(paste("id comporte", nb_id - length(id), "elements en moins."))
+      }
+    }
+    ind_tot <- ind_tot %>% mutate(ID = id[as.numeric(ID)])
   }
 
   ind_tot

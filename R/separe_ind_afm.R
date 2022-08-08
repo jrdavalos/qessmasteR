@@ -15,7 +15,7 @@
 #' @importFrom dplyr %>% mutate across count add_count filter select case_when distinct cur_column relocate
 #' @importFrom tidyselect everything matches
 
-separe_ind_afm <- function(afm, nb = 3, act_uniq = FALSE) {
+separe_ind_afm <- function(afm, nb = Inf, act_uniq = FALSE) {
   if (class(afm)[1] != "MFA") {stop("Pas objet AFM")}
   groupes <- c(0, cumsum(afm$call$group))
   num_groupes <- 1:length(afm$separate.analyses)

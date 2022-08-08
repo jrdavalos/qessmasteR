@@ -17,7 +17,7 @@
 #' @importFrom tidyselect starts_with ends_with matches everything
 #' @importFrom stringr str_detect str_extract str_remove
 
-tab_quali_agd <- function(agd, sup_dbl = TRUE, nb = 3) {# creation de tous les tableaux pour les acm
+tab_quali_agd <- function(agd, sup_dbl = TRUE, nb = Inf) {# creation de tous les tableaux pour les acm
   type <- class(agd)[1]
 
   if (type == "MCA") {

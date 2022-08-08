@@ -4,7 +4,7 @@
 \alias{separe_quali_afm}
 \title{separe_quali_afm}
 \usage{
-separe_quali_afm(afm, sup_dbl = TRUE, nb = 3, act_uniq = FALSE)
+separe_quali_afm(afm, sup_dbl = TRUE, nb = Inf, act_uniq = FALSE)
 }
 \arguments{
 \item{afm}{objet MFA}

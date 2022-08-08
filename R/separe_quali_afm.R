@@ -16,7 +16,7 @@
 #' @importFrom dplyr %>% mutate across count add_count filter select case_when distinct cur_column
 #' @importFrom tidyselect everything matches
 
-separe_quali_afm <- function(afm, sup_dbl = TRUE, nb = 3, act_uniq = FALSE) {
+separe_quali_afm <- function(afm, sup_dbl = TRUE, nb = Inf, act_uniq = FALSE) {
   if (class(afm)[1] != "MFA") {stop("Pas objet AFM")}
   base <- get(afm$call$call$base)
   var_reco <- base %>% # on doit savoir quelles modalites vont apparaitre avec leur variable
