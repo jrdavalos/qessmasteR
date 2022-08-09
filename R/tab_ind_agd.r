@@ -97,7 +97,7 @@ tab_ind_agd <- function(agd, nb = Inf, id = NULL) {# creation de tous les tablea
     if (!is.vector(id)) {
       stop("id doit etre un vecteur.")
     }
-    if (nrow(ind_tot) %% length(id) != 0) {
+    if (length(id) %% nrow(ind_tot) != 0) {
       nb_id <- length(unique(ind_tot$ID))
       if (length(id) > nb_id) {
         stop(paste("id comporte", length(id) - nb_id, "elements en trop."))
