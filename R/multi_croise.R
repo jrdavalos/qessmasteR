@@ -22,7 +22,7 @@
 #' @return Un tabyl data.frame regroupant tous les tableaux croisés avec pourcentages et effectifs. Si les pourcentages sont en ligne et que les totaux sont activés alors la ligne de total est nommée "Ensemble" et la colonne de total est nommée "Total" et inversement pour les pourcentages en colonne.
 #' @export
 #'
-#' @importFrom rlang enquos
+#' @importFrom rlang set_names quo
 #' @importFrom tibble tibble rownames_to_column
 #' @importFrom purrr map_dfr
 #' @importFrom dplyr %>% mutate mutate_if rename if_else select case_when
@@ -99,10 +99,14 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
   }
 
   # on cree une liste de toutes les variables a utiliser dans le tableau
-  list_vars <- rlang::enquos(..., .named = TRUE)
+  # d'abord le dataframe avec uniquement les variables souhaitées :
+  data_vars <- data %>% select(...)
+  # on peut faire la liste des NOMS comme suit :
+  list_vars <- map(set_names(names(data_vars)), ~ quo(!!as.name(.x)))
   if (length(list_vars) == 0) {
     stop(paste("Pas de variable a croiser avec", deparse(substitute(var_princ))))
-    }
+  }
+  # on applique nos fonctions à la list :
   map_dfr(list_vars, ~ transformation(tableau(!!.x)), .id = "Variables")
   # map_dfr applique la fonction tableau() a chaque element de la liste
   # a chaque tableau produit, le nom des variables est ajoute sur la gauche

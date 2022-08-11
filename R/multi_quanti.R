@@ -22,7 +22,7 @@
 #' @export
 #'
 #' @importFrom stats quantile
-#' @importFrom rlang enquos
+#' @importFrom rlang set_names quo
 #' @importFrom purrr map_dfr
 #' @importFrom dplyr %>% group_by summarise select rename filter n
 #' @importFrom gmodels ci
@@ -78,10 +78,14 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
     }
     tab %>% select(-Personne)
   }
-  list_vars <- rlang::enquos(..., .named = TRUE)
+  # d'abord le dataframe avec uniquement les variables souhaitées :
+  data_vars <- data %>% select(...)
+  # on peut faire la liste des NOMS comme suit :
+  list_vars <- map(set_names(names(data_vars)), ~ quo(!!as.name(.x)))
   if (length(list_vars) == 0) {
     stop(paste("Pas de variable a croiser avec", deparse(substitute(var_princ))))
   }
+  # on applique nos fonctions à la list :
   map_dfr(list_vars, ~sommaire(!!.x), .id = "Variables")
 }
 
