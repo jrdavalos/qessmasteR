@@ -17,7 +17,7 @@ En prévision :
   - d'autres fonctions pour les AGD, notamment concernant les nuages d'individus
   - des fonctions de mise en forme de résultats (tableaux surtout), adaptable en html et LaTeX
 
-L'idée est de faciliter la vie dans les traitements de données, c'est aussi pourquoi la documentation est en français. Toute suggestion est la bienvenue (-> mon adresse mail : davalosjulioricardo@gmail.com) ! Par ailleurs, comme le package est tout récent, il risque de beaucoup évoluer. Je vous conseille de le réinstaller de temps en temps ou de venir sur cette page pour suivre l'arrivée de nouvelles fonctions.
+L'idée est de faciliter la vie dans les traitements de données, c'est aussi pourquoi la documentation est en français. Toute suggestion est la bienvenue (-> mon adresse mail : julioricardo.davalos@ehess.fr) ! Par ailleurs, comme le package est tout récent, il risque de beaucoup évoluer. Je vous conseille de le réinstaller de temps en temps ou de venir sur cette page pour suivre l'arrivée de nouvelles fonctions.
 
 Pour l'installation :
 ```r
