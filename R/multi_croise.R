@@ -91,7 +91,7 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
 
     if (eff) {tab <- tab %>% adorn_ns(ns = tab_tot)} # effectifs sous la forme (n) avec les eff du tot arrondis
     if (p.val) {
-      if (cram.v_var) {tab <- tab %>% mutate(Khi2 = c(p, rep(v, nrow(tab) - 1)))}
+      if (cram.v_var) {tab <- tab %>% mutate(Khi2 = c(rep(p, nrow(tab) - 1), v))}
       else {tab <- tab %>% mutate(Khi2 = rep(p, nrow(tab)))}
       }
 
