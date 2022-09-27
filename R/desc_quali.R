@@ -1,7 +1,7 @@
 #' @title  desc_quali
 #' @author Kanto Fiaferana & Julio Ricardo Davalos
 #'
-#' @description Permet d'obtenir un tri à plat de plusieurs variables en même temps
+#' @description Permet d'obtenir un tri à plat de plusieurs variables catégorielles en même temps
 #'
 #' @param data base de données
 #' @param ... variables souhaitées
@@ -27,7 +27,7 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, cum_freq = FALSE, NR 
   # tidyselect des variables a utiliser :
   data_vars <- data %>% select(...)
   if (ncol(data_vars) == 0) {
-    warning("Pas de variable selectionnee, utilisation de toutes les variables non numeriques.")
+    warning("Pas de variable selectionnee, utilisation de toutes les variables non numeriques.", call. = FALSE)
     data_vars <- data %>% select(everything() & !where(is.numeric))
   }
   # liste des noms et tri si jamais pas de nom:
@@ -47,6 +47,11 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, cum_freq = FALSE, NR 
   desc <- function(var) {
     # on selectionne la variable
     tab <- data %>% select({{var}})
+    test <- tab %>% unlist()
+    nom <- tab %>% names()
+    if (is.numeric(test)) {
+      warning(paste("La variable" , nom, "n'est pas categorielle mais numerique !\nTransformee en categorielle."), call. = FALSE)
+    }
     # si ponderation on ajoute au nouveau dataframe :
     if (!is.null(pond)) {
       # on ajoute le vecteur de poids
@@ -59,7 +64,7 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, cum_freq = FALSE, NR 
       tab <- tab %>% filter(!is.na({{var}}))
       # s'il n'y a que des NA alors pas de lignes
       if (nrow(tab) == 0) {
-        warning(paste(names(tab)[1]), " ne contient que des non-reponses, elles sont gardees pour cette variable.")
+        warning(paste(names(tab)[1]), " ne contient que des non-reponses, elles sont gardees pour cette variable.", call. = FALSE)
         tab <- tab1
       }
       # normalisation de la ponderation si besoin et si demande
