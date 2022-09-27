@@ -24,7 +24,7 @@
 #' @importFrom stats quantile
 #' @importFrom rlang set_names quo
 #' @importFrom purrr map_dfr
-#' @importFrom dplyr %>% group_by summarise select rename filter n
+#' @importFrom dplyr %>% group_by summarise select rename filter n pull
 #' @importFrom gmodels ci
 
 multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE, ic_seuil = 0.05,
@@ -32,8 +32,8 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
                          NR = TRUE) {
   if (!moy) ic <- FALSE; sd <- FALSE
   sommaire <- function(var) {
-    test <- data %>% select({{var}}) %>% unlist
-    nom <- data %>% select({{var}}) %>% names
+    test <- data %>% select({{var}}) %>% pull()
+    nom <- data %>% select({{var}}) %>% names()
     if (is.numeric(test)) {
       warning(paste("La variable" , nom, "n'est pas categorielle mais numerique !\nTransformee en categorielle."), call. = FALSE)
     }

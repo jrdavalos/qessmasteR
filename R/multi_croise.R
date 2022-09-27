@@ -25,7 +25,7 @@
 #' @importFrom rlang set_names quo
 #' @importFrom tibble tibble rownames_to_column
 #' @importFrom purrr map_dfr
-#' @importFrom dplyr %>% mutate mutate_if rename if_else select case_when
+#' @importFrom dplyr %>% mutate mutate_if rename if_else select case_when pull
 #' @importFrom questionr wtd.table
 #' @importFrom janitor %>% tabyl adorn_totals adorn_percentages adorn_pct_formatting adorn_ns adorn_rounding as_tabyl chisq.test
 
@@ -43,13 +43,13 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
   else {# cas avec ponderation
     nr <- ifelse(NR == FALSE, "no", "ifany") # NR pour le wtd.table
 
-    var_princ2 <- data %>% select({{var_princ}}) %>% unlist(use.names = FALSE) # on vectorise
+    var_princ2 <- data %>% select({{var_princ}}) %>% pull() # on vectorise
     if (length(var_princ2) != length(pond)) {
       stop("Le vecteur de ponderation n'est pas de la bonne longueur.")
       }
 
     tableau <- function(var){ # fonction plus haut adaptee au wtd.table
-      var2 <- data %>% select({{var}}) %>% unlist(use.names = FALSE) # idem
+      var2 <- data %>% select({{var}}) %>% pull() # idem
 
       tab <- wtd.table(var2, var_princ2, weights = pond, normwt = norm_pond, useNA = nr) %>%
         as.data.frame.array %>%

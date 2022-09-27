@@ -14,7 +14,7 @@
 #'
 #' @return un tableau avec les effectifs et fréquences de chaque modalité de chaque variable sélectionnée
 #'
-#' @importFrom dplyr bind_rows mutate %>% filter group_by count rename select
+#' @importFrom dplyr bind_rows mutate %>% filter group_by count rename select pull
 #' @importFrom tidyselect everything
 #' @importFrom purrr map map_dfr
 #'
@@ -33,22 +33,17 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, cum_freq = FALSE, NR 
   # liste des noms et tri si jamais pas de nom:
   list_vars <- map(set_names(names(data_vars)), ~ quo(!!as.name(.x)))
   # gestion de la ponderation (si vecteur ou non + pb de longueur)
-  if (!is.null(pond) & !is.vector(pond)) {
-    pond <- data %>% select({{pond}}) %>% unlist(use.names = FALSE)
-  } else if (is.vector(pond)) {
-    if (length(data_vars[,1]) != length(pond)) {
+  if (!is.null(pond)) {# si pas de ponderation alors pas besoin de la normaliser
+    if (nrow(data_vars) != length(pond)) {
       stop("Le vecteur de ponderation n'est pas de la bonne longueur.")
     }
-  } else if (is.null(pond)) {# si pas de ponderation alors pas besoin de la normaliser
-    norm_pond <- FALSE
   }
-
   # fonction de tri a plat par variable
   desc <- function(var) {
     # on selectionne la variable
     tab <- data %>% select({{var}})
-    test <- tab %>% unlist()
-    nom <- tab %>% names()
+    test <- pull(tab)
+    nom <- names(tab)
     if (is.numeric(test)) {
       warning(paste("La variable" , nom, "n'est pas categorielle mais numerique !\nTransformee en categorielle."), call. = FALSE)
     }
