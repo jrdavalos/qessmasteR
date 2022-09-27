@@ -7,6 +7,7 @@
 #' @param ... variables souhaitées
 #' @param eff TRUE par défaut. Fait apparaître les effectifs par catégorie
 #' @param freq TRUE par défaut. idem mais avec les fréquences
+#' @param nb 1 par défaut. Nombre de décimales pour les pourcentages.
 #' @param cum_freq FALSE par défaut. Fréquences cumulées (veillez bien à ranger les modalités dans l'ordre souhaité)
 #' @param NR FALSE par défaut. Les non-réponses comptent-elles parmi les catégories ?
 #' @param pond NULL par défaut. Vecteur contenant les poids
@@ -20,7 +21,7 @@
 #'
 #' @export
 
-desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, cum_freq = FALSE, NR = FALSE, pond = NULL, norm_pond = TRUE) {
+desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, nb = 1, cum_freq = FALSE, NR = FALSE, pond = NULL, norm_pond = TRUE) {
   if (cum_freq) {# si freq cumule alors forcement non cumule
     freq <- TRUE
   }
@@ -76,7 +77,7 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, cum_freq = FALSE, NR 
 
     }
     if (freq) {# ajout des frequences
-      tab <- tab %>% mutate(Frequence = N / sum(N))
+      tab <- tab %>% mutate(Frequence = round(100 * N / sum(N), nb))
     }
 
     if (cum_freq) {# ajout des frequences cumulees
@@ -86,7 +87,9 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, cum_freq = FALSE, NR 
       tab <- tab %>% select(-N)
     }
     # on renomme la colonne 1 "modalites" et on la met en character
-    tab %>% rename(Modalite = 1) %>% mutate(Modalite = as.character(Modalite))
+    tab %>%
+      rename(Modalite = 1) %>%
+      mutate(Modalite = as.character(Modalite))
   }
 
   # boucle pour toute la liste :
