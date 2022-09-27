@@ -2,12 +2,12 @@
 Quelques fonctions simplificatrices pour étudiants, chercheurs et ingénieurs en sciences sociales (QESS étant le Master Quantifier en sciences sociales de l'ENS et de l'EHESS). 
 
 On y trouve pour l'instant, des fonctions génériques pour la production de certains types de tableaux :
-  - desc_quali() qui sert à réaliser des tris à plat de toutes les variables catégorielles sélectionnées.
+  - desc_quali() qui sert à réaliser des tris à plat de toutes les variables catégorielles sélectionnées. Pondération possible.
+  - multi_croise() qui sert à obtenir un tableau descriptif croisant une variable avec une liste d'autres variables. Cela est utile pour décrire des clusters par exemple. Pondération possible.
+  - multi_quanti() qui est comme multi_croise mais avec une variable quantitative en fonction de variables catégorielles, on peut obtenir un ensemble de statistiques synthétiques de la variable quantitative en fonction des catégories des variables catégorielles. Pondération à venir.
+  - lprop_pctot() qui sert à générer un tableau avec pourcentages en lignes mais indiquant les effectifs et le pourcentage sur le total de chaque ligne. Pondération possible.
   - multi_mp() qui sert à réaliser des modèles de probabilité linéaire avec des variables expliquées à plus de deux catégories.
   - stat_ajust() qui sert à obtenir les indicateurs d'ajustement des modèles log-linéaires. En effet, ces derniers étant construits sur des tableaux de contingence, les effectifs ne sont pas correctement pris en compte par les fonctions dédiées.
-  - lprop_pctot() qui sert à générer un tableau avec pourcentages en lignes mais indiquant les effectifs et le pourcentage sur le total de chaque ligne. Prend en compte les pondérations.
-  - multi_croise() qui sert à obtenir un tableau descriptif croisant une variable avec une liste d'autres variables. Cela est utile pour décrire des clusters par exemple
-  - multi_quanti() qui est comme multi_croise mais avec une variable quantitative en fonction de variables catégorielles, on peut obtenir un ensemble de statistiques synthétiques de la variable quantitative en fonction des catégories des variables catégorielles
 
 De même, il y a des outils servant à la réalisation d'analyses géométriques de données :
   - exclure_agd() qui permet d'obtenir l'index des modalités à exclure dans une AGD
