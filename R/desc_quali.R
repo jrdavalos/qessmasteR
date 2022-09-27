@@ -37,7 +37,8 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, cum_freq = FALSE, NR 
     if (nrow(data_vars) != length(pond)) {
       stop("Le vecteur de ponderation n'est pas de la bonne longueur.")
     }
-  }
+  } else norm_pond <- FALSE
+
   # fonction de tri a plat par variable
   desc <- function(var) {
     # on selectionne la variable
