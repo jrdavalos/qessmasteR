@@ -52,7 +52,7 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
                   N = sum(!is.na({{var_princ}})),
                   `N avec NR` = n()) %>%
         rename(Modalite = 1) %>%
-        mutate(Personne = is.na(Modalites),
+        mutate(Personne = is.na(Modalite),
                Modalite = as.character(Modalite))
     )
     if (!sd) tab <- tab %>% select(-`Ecart-type`)
