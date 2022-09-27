@@ -95,7 +95,7 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
       else {tab <- tab %>% mutate(Khi2 = rep(p, nrow(tab)))}
       }
 
-    tab %>% rename(Modalites = 1) # pour pouvoir bind
+    tab %>% rename(Modalite = 1) # pour pouvoir bind
   }
 
   # on cree une liste de toutes les variables a utiliser dans le tableau
@@ -107,7 +107,7 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
     stop(paste("Pas de variable a croiser avec", deparse(substitute(var_princ))))
   }
   # on applique nos fonctions à la list :
-  map_dfr(list_vars, ~ transformation(tableau(!!.x)), .id = "Variables")
+  map_dfr(list_vars, ~ transformation(tableau(!!.x)), .id = "Variable")
   # map_dfr applique la fonction tableau() a chaque element de la liste
   # a chaque tableau produit, le nom des variables est ajoute sur la gauche
 }

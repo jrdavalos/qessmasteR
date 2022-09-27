@@ -51,9 +51,9 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
                   Q3 = quantile({{var_princ}}, probs = 0.75, na.rm = TRUE),
                   N = sum(!is.na({{var_princ}})),
                   `N avec NR` = n()) %>%
-        rename(Modalites = 1) %>%
+        rename(Modalite = 1) %>%
         mutate(Personne = is.na(Modalites),
-               Modalites = as.character(Modalites))
+               Modalite = as.character(Modalite))
     )
     if (!sd) tab <- tab %>% select(-`Ecart-type`)
     if (!ic) tab <- tab %>% select(-c(`IC-`, `IC+`))
@@ -86,7 +86,7 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
     stop(paste("Pas de variable a croiser avec", deparse(substitute(var_princ))))
   }
   # on applique nos fonctions à la list :
-  map_dfr(list_vars, ~sommaire(!!.x), .id = "Variables")
+  map_dfr(list_vars, ~sommaire(!!.x), .id = "Variable")
 }
 
 
