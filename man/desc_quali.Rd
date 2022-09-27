@@ -2,23 +2,42 @@
 % Please edit documentation in R/desc_quali.R
 \name{desc_quali}
 \alias{desc_quali}
-\title{desc_quali (beta)}
+\title{desc_quali}
 \usage{
-desc_quali(...)
+desc_quali(
+  data,
+  ...,
+  eff = TRUE,
+  freq = TRUE,
+  cum_freq = FALSE,
+  NR = FALSE,
+  pond = NULL,
+  norm_pond = TRUE
+)
 }
 \arguments{
+\item{data}{base de données}
+
 \item{...}{variables souhaitées}
+
+\item{eff}{TRUE par défaut. Fait apparaître les effectifs par catégorie}
+
+\item{freq}{TRUE par défaut. idem mais avec les fréquences}
+
+\item{cum_freq}{FALSE par défaut. Fréquences cumulées (veillez bien à ranger les modalités dans l'ordre souhaité)}
+
+\item{NR}{FALSE par défaut. Les non-réponses comptent-elles parmi les catégories ?}
+
+\item{pond}{NULL par défaut. Vecteur contenant les poids}
+
+\item{norm_pond}{TRUE par défaut. Normalise les poids (poids moyen = 1)}
 }
 \value{
-un tableau avec les effectifs et fréquences de chaque modalité de chaque variable
+un tableau avec les effectifs et fréquences de chaque modalité de chaque variable sélectionnée
 }
 \description{
-Permet d'obtenir une description de plusieurs variables en même temps avec la fonction freq()
-}
-\examples{
-data <- data.frame(replicate(3,sample(0:3,1000,rep=TRUE)))
-desc_quali(data$X1,data$X2,data$X3)
+Permet d'obtenir un tri à plat de plusieurs variables en même temps
 }
 \author{
-Kanto Fiaferana
+Kanto Fiaferana & Julio Ricardo Davalos
 }
