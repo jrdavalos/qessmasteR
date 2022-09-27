@@ -36,7 +36,7 @@ desc_quali(
 un tableau avec les effectifs et fréquences de chaque modalité de chaque variable sélectionnée
 }
 \description{
-Permet d'obtenir un tri à plat de plusieurs variables en même temps
+Permet d'obtenir un tri à plat de plusieurs variables catégorielles en même temps
 }
 \author{
 Kanto Fiaferana & Julio Ricardo Davalos

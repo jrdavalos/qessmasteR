@@ -58,7 +58,7 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
     if (!sd) tab <- tab %>% select(-`Ecart-type`)
     if (!ic) tab <- tab %>% select(-c(`IC-`, `IC+`))
     if ((sd | ic) & sum(is.na(tab$`IC-`)) > 0) {
-      warning(paste("Pas d'ecart-type ou d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une unique reponse au croisement la variable d'interet."), call. = FALSE)
+      warning(paste("Pas d'ecart-type ou d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une unique reponse au croisement de la variable d'interet."), call. = FALSE)
     }
     if (!moy) tab <- tab %>% select(-Moyenne)
     if (moy & sum(is.na(tab$Moyenne)) > 0) {

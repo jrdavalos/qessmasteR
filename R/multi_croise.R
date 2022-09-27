@@ -69,7 +69,7 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
       else {
         cram.v_var <- FALSE
         p <- ""
-        warning(paste0("Pas de p-value calculable pour la variable : ", names(tabl)[1]))
+        warning(paste0("Pas de p-value calculable pour la variable : ", names(tabl)[1]), call. = FALSE)
         }
       }
     if (cram.v_var) {
