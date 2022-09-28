@@ -9,8 +9,10 @@ desc_quali(
   ...,
   eff = TRUE,
   freq = TRUE,
+  nb = 1,
   cum_freq = FALSE,
   NR = FALSE,
+  tot = TRUE,
   pond = NULL,
   norm_pond = TRUE
 )
@@ -20,17 +22,21 @@ desc_quali(
 
 \item{...}{variables souhaitées}
 
-\item{eff}{TRUE par défaut. Fait apparaître les effectifs par catégorie}
+\item{eff}{TRUE par défaut. Fait apparaître les effectifs par catégorie.}
 
-\item{freq}{TRUE par défaut. idem mais avec les fréquences}
+\item{freq}{TRUE par défaut. idem mais avec les fréquences.}
+
+\item{nb}{1 par défaut. Nombre de décimales pour les pourcentages.}
 
 \item{cum_freq}{FALSE par défaut. Fréquences cumulées (veillez bien à ranger les modalités dans l'ordre souhaité)}
 
 \item{NR}{FALSE par défaut. Les non-réponses comptent-elles parmi les catégories ?}
 
-\item{pond}{NULL par défaut. Vecteur contenant les poids}
+\item{tot}{TRUE par défaut. Ligne de total à la fin de chaque variable.}
 
-\item{norm_pond}{TRUE par défaut. Normalise les poids (poids moyen = 1)}
+\item{pond}{NULL par défaut. Vecteur contenant les poids.}
+
+\item{norm_pond}{TRUE par défaut. Normalise les poids (poids moyen = 1).}
 }
 \value{
 un tableau avec les effectifs et fréquences de chaque modalité de chaque variable sélectionnée

@@ -5,23 +5,24 @@
 #'
 #' @param data base de données
 #' @param ... variables souhaitées
-#' @param eff TRUE par défaut. Fait apparaître les effectifs par catégorie
-#' @param freq TRUE par défaut. idem mais avec les fréquences
+#' @param eff TRUE par défaut. Fait apparaître les effectifs par catégorie.
+#' @param freq TRUE par défaut. idem mais avec les fréquences.
 #' @param nb 1 par défaut. Nombre de décimales pour les pourcentages.
 #' @param cum_freq FALSE par défaut. Fréquences cumulées (veillez bien à ranger les modalités dans l'ordre souhaité)
 #' @param NR FALSE par défaut. Les non-réponses comptent-elles parmi les catégories ?
-#' @param pond NULL par défaut. Vecteur contenant les poids
-#' @param norm_pond TRUE par défaut. Normalise les poids (poids moyen = 1)
+#' @param tot TRUE par défaut. Ligne de total à la fin de chaque variable.
+#' @param pond NULL par défaut. Vecteur contenant les poids.
+#' @param norm_pond TRUE par défaut. Normalise les poids (poids moyen = 1).
 #'
 #' @return un tableau avec les effectifs et fréquences de chaque modalité de chaque variable sélectionnée
 #'
-#' @importFrom dplyr bind_rows mutate %>% filter group_by count rename select pull
+#' @importFrom dplyr bind_rows mutate %>% filter group_by count rename select pull across
 #' @importFrom tidyselect everything
 #' @importFrom purrr map map_dfr
 #'
 #' @export
 
-desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, nb = 1, cum_freq = FALSE, NR = FALSE, pond = NULL, norm_pond = TRUE) {
+desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, nb = 1, cum_freq = FALSE, NR = FALSE, tot = TRUE, pond = NULL, norm_pond = TRUE) {
   if (cum_freq) {# si freq cumule alors forcement non cumule
     freq <- TRUE
   }
@@ -77,7 +78,7 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, nb = 1, cum_freq = FA
 
     }
     if (freq) {# ajout des frequences
-      tab <- tab %>% mutate(Frequence = round(100 * N / sum(N), nb))
+      tab <- tab %>% mutate(Frequence = 100 * N / sum(N))
     }
 
     if (cum_freq) {# ajout des frequences cumulees
@@ -87,9 +88,19 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, nb = 1, cum_freq = FA
       tab <- tab %>% select(-N)
     }
     # on renomme la colonne 1 "modalites" et on la met en character
-    tab %>%
+    tab <- tab %>%
       rename(Modalite = 1) %>%
       mutate(Modalite = as.character(Modalite))
+    # ajout d'une ligne total
+    if (tot) {
+      tab <- tab %>%
+        bind_rows(summarise(., across(where(is.numeric), sum), across(!where(is.numeric), ~'Total')))
+      if (cum_freq) {
+        tab <- tab %>%
+          mutate(`Frequence cumulee` = case_when(Modalite = 'Total' ~ NA, TRUE ~ `Frequence cumulee`))
+      }
+    }
+    tab %>% mutate(across(where(is.numeric), ~round(.x, nb)))
   }
 
   # boucle pour toute la liste :
