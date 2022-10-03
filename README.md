@@ -3,6 +3,7 @@ Quelques fonctions simplificatrices pour étudiants, chercheurs et ingénieurs e
 
 On y trouve pour l'instant, des fonctions génériques pour la production de certains types de tableaux :
   - desc_quali() qui sert à réaliser des tris à plat de toutes les variables catégorielles sélectionnées. Pondération possible.
+  - desc_quanti() qui sert à réaliser des tris à plat de toutes les variables quantitatives sélectionnées. Pondération à venir.
   - multi_croise() qui sert à obtenir un tableau descriptif croisant une variable avec une liste d'autres variables. Cela est utile pour décrire des clusters par exemple. Pondération possible.
   - multi_quanti() qui est comme multi_croise mais avec une variable quantitative en fonction de variables catégorielles, on peut obtenir un ensemble de statistiques synthétiques de la variable quantitative en fonction des catégories des variables catégorielles. Pondération à venir.
   - lprop_pctot() qui sert à générer un tableau avec pourcentages en lignes mais indiquant les effectifs et le pourcentage sur le total de chaque ligne. Pondération possible.

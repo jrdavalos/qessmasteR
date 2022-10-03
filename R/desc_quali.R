@@ -22,7 +22,8 @@
 #'
 #' @export
 
-desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, nb = 1, cum_freq = FALSE, NR = FALSE, tot = TRUE, pond = NULL, norm_pond = TRUE) {
+desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, nb = 1, cum_freq = FALSE, NR = FALSE, tot = TRUE, pond = NULL,
+                       norm_pond = TRUE) {
   if (cum_freq) {# si freq cumule alors forcement non cumule
     freq <- TRUE
   }
@@ -32,7 +33,7 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, nb = 1, cum_freq = FA
     warning("Pas de variable selectionnee, utilisation de toutes les variables non numeriques.", call. = FALSE)
     data_vars <- data %>% select(everything() & !where(is.numeric))
   }
-  # liste des noms et tri si jamais pas de nom:
+  # liste des noms :
   list_vars <- map(set_names(names(data_vars)), ~ quo(!!as.name(.x)))
   # gestion de la ponderation (si vecteur ou non + pb de longueur)
   if (!is.null(pond)) {# si pas de ponderation alors pas besoin de la normaliser

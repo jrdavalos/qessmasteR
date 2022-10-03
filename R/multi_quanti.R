@@ -27,10 +27,12 @@
 #' @importFrom dplyr %>% group_by summarise select rename filter n pull
 #' @importFrom gmodels ci
 
-multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE, ic_seuil = 0.05,
-                         nb = 2, med = TRUE, quart = TRUE, minmax = TRUE, eff = TRUE, eff_na = FALSE,
-                         NR = TRUE) {
-  if (!moy) ic <- FALSE; sd <- FALSE
+multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE, ic_seuil = 0.05, nb = 2, med = TRUE,
+                         quart = TRUE, minmax = TRUE, eff = TRUE, eff_na = FALSE, NR = TRUE) {
+  if (!moy) {
+    ic <- FALSE
+    sd <- FALSE
+    }
   sommaire <- function(var) {
     test <- data %>% select({{var}}) %>% pull()
     nom <- data %>% select({{var}}) %>% names()
@@ -42,12 +44,12 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE,
         group_by({{var}}) %>%
         summarise(Minimum = min({{var_princ}}, na.rm = TRUE),
                   Maximum = max({{var_princ}}, na.rm = TRUE),
-                  Moyenne = mean({{var_princ}}, na.rm = TRUE),
-                  `Ecart-type` = round(sd({{var_princ}}, na.rm = TRUE), nb),
+                  Moyenne = round(mean({{var_princ}}, na.rm = TRUE), nb),
                   `IC-` = round(ci({{var_princ}}, alpha = ic_seuil, na.rm = TRUE)[2], nb),
                   `IC+` = round(ci({{var_princ}}, alpha = ic_seuil, na.rm = TRUE)[3], nb),
+                  `Ecart-type` = round(sd({{var_princ}}, na.rm = TRUE), nb),
                   Q1 = quantile({{var_princ}}, probs = 0.25, na.rm = TRUE),
-                  Mediane = quantile({{var_princ}}, probs = 0.5, na.rm = TRUE),
+                  Mediane = quantile({{var_princ}}, probs = 0.5, na.rm = TRUE),# idee : probs = seq(0, 1, 1/n) => summarise(across())
                   Q3 = quantile({{var_princ}}, probs = 0.75, na.rm = TRUE),
                   N = sum(!is.na({{var_princ}})),
                   `N avec NR` = n()) %>%
