@@ -7,78 +7,141 @@
 #' @param var_princ variable principale (quantitative, en colonnes)
 #' @param ... variables catégorielles à croiser avec la variable principale (en lignes)
 #' @param moy TRUE par défaut. Moyenne par modalité.
+#' @param anova TRUE par défaut. Réalise un ANOVA et retourne sa p-value.
 #' @param sd TRUE par défaut. Écart-type par modalité.
 #' @param ic TRUE par défaut. Intervalle de confiance de la moyenne par modalité. N'apparait pas si moy = FALSE
 #' @param ic_seuil risque de première espèce pour l'intervalle de confiance.
 #' @param nb nombre de décimales pour la moyenne, l'écart-type et l'intervalle de confiance.
 #' @param med TRUE par défaut. Médiane par modalité.
-#' @param quart TRUE par défaut. Quartiles Q1 et Q3 par modalité.
+#' @param quant TRUE par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin.
 #' @param minmax TRUE par défaut. Minimum et maximum par modalité.
 #' @param eff TRUE par défaut. Effectifs par modalité.
-#' @param eff_na FALSE par défaut. Effectifs par modalité en comptant les non-réponses à la place des effectifs. N'apparait pas si eff = FALSE
-#' @param NR TRUE par défaut. Supprime les non-réponses
+#' @param eff_na FALSE par défaut. Effectifs des non-réponses dans la variable quantitative par modalité.
+#' @param NR FALSE par défaut. Garde les non-réponses des variables catégorielles.
+#' @param msg FALSE par défaut. Envoie un message pour chaque variable terminée : utile si bug inexpliqué.
 #'
 #' @return Un tibble avec en colonne les indicateurs synthétiques de la variable d'intérêt selon les modalités des variables catégorielles choisies.
 #' @export
 #'
-#' @importFrom stats quantile
+#' @importFrom stats quantile aov
 #' @importFrom rlang set_names quo
-#' @importFrom purrr map_dfr
-#' @importFrom dplyr %>% group_by summarise select rename filter n pull
-#' @importFrom gmodels ci
+#' @importFrom stringr str_remove str_replace
+#' @importFrom purrr map_dfr map2_dfc
+#' @importFrom dplyr %>% group_by summarise select rename filter n pull rename_with
+#' @importFrom DescTools MeanCI
 
-multi_quanti <- function(data, var_princ, ..., moy = TRUE, sd = TRUE, ic = TRUE, ic_seuil = 0.05, nb = 2, med = TRUE,
-                         quart = TRUE, minmax = TRUE, eff = TRUE, eff_na = FALSE, NR = TRUE) {
+multi_quanti <- function(data, var_princ, ..., moy = TRUE, anova = TRUE, sd = TRUE, ic = TRUE, ic_seuil = 0.05, nb = 2, med = TRUE,
+                         quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, NR = FALSE, msg = FALSE) {
   if (!moy) {
     ic <- FALSE
     sd <- FALSE
-    }
+  }
+  if (quant < 0) {
+    quant <- 0
+    warning("Pas de quantile calcule car valeur negative.")
+  }
+  nom_princ <- data %>% select({{var_princ}}) %>% names()
   sommaire <- function(var) {
     test <- data %>% select({{var}}) %>% pull()
     nom <- data %>% select({{var}}) %>% names()
     if (is.numeric(test)) {
       warning(paste("La variable" , nom, "n'est pas categorielle mais numerique !\nTransformee en categorielle."), call. = FALSE)
     }
-    suppressWarnings(
-      tab <- data %>%
-        group_by({{var}}) %>%
-        summarise(Minimum = min({{var_princ}}, na.rm = TRUE),
-                  Maximum = max({{var_princ}}, na.rm = TRUE),
-                  Moyenne = round(mean({{var_princ}}, na.rm = TRUE), nb),
-                  `IC-` = round(ci({{var_princ}}, alpha = ic_seuil, na.rm = TRUE)[2], nb),
-                  `IC+` = round(ci({{var_princ}}, alpha = ic_seuil, na.rm = TRUE)[3], nb),
-                  `Ecart-type` = round(sd({{var_princ}}, na.rm = TRUE), nb),
-                  Q1 = quantile({{var_princ}}, probs = 0.25, na.rm = TRUE),
-                  Mediane = quantile({{var_princ}}, probs = 0.5, na.rm = TRUE),# idee : probs = seq(0, 1, 1/n) => summarise(across())
-                  Q3 = quantile({{var_princ}}, probs = 0.75, na.rm = TRUE),
-                  N = sum(!is.na({{var_princ}})),
-                  `N avec NR` = n()) %>%
-        rename(Modalite = 1) %>%
-        mutate(Personne = is.na(Modalite),
-               Modalite = as.character(Modalite))
-    )
-    if (!sd) tab <- tab %>% select(-`Ecart-type`)
-    if (!ic) tab <- tab %>% select(-c(`IC-`, `IC+`))
-    if ((sd | ic) & sum(is.na(tab$`IC-`)) > 0) {
-      warning(paste("Pas d'ecart-type ou d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une unique reponse au croisement de la variable d'interet."), call. = FALSE)
+    # on cree une fonction donnant tous les indicateurs selectionnes
+    # listes ou on ajoute au fur et a mesure :
+    fonc <- list()
+    if (eff) {# effectifs ou non
+      fonc[[length(fonc) + 1]] <- list(N = function(x) {sum(!is.na(x))})
     }
-    if (!moy) tab <- tab %>% select(-Moyenne)
-    if (moy & sum(is.na(tab$Moyenne)) > 0) {
+    if (eff_na) {# nombre de NA de la variable quanti ou non
+      fonc[[length(fonc) + 1]] <- list(NR = function(x) {sum(is.na(x))})
+    }
+    if (minmax) {
+      fonc[[length(fonc) + 1]] <- list(Min = function(x) {min(x, na.rm = TRUE)})
+      fonc[[length(fonc) + 1]] <- list(Max = function(x) {max(x, na.rm = TRUE)})
+    }
+    if (ic) {# d'abord les intervalles de confiance car calcule deja la moyenne
+      fonc[[length(fonc) + 1]] <- list(Moyenne = function(x) {
+        MeanCI(x, conf.level = (1 - ic_seuil), na.rm = TRUE) %>%
+          as.list() %>%
+          as.data.frame() %>%
+          round(nb) %>%
+          rename(Moy = mean, `IC-` = lwr.ci, `IC+` = upr.ci)
+          }
+        )
+    } else if (moy) {# si que moyenne alors calcul avec mean
+      fonc[[length(fonc) + 1]] <- list(Moy = function(x) {mean(x, na.rm = TRUE) %>% round(nb)})
+    }
+    if (sd) {# ecart-type
+      fonc[[length(fonc) + 1]] <- list(SD = function(x) {sd(x, na.rm = TRUE) %>% round(nb)})
+    }
+    if (quant > 0) {# bornes des quantiles
+      val_quant <- seq(0, 1, 1 / quant)
+      if (med & quant %% 2) { # si mediane et qu'elle est pas contenue dans les quantiles alors on l'ajoute au milieu
+        val_quant <- c(val_quant, 0.5)
+        val_quant <- val_quant[order(val_quant)]
+      }
+      val_quant <- val_quant[-c(1, length(val_quant))]
+      med <- FALSE # pour pas la faire deux fois
+      fonc[[length(fonc) + 1]] <- list(Quantiles = function(x) {
+        quantile(x, probs = val_quant, na.rm = TRUE) %>%
+          as.list() %>%
+          as.data.frame() %>%
+          rename_with(~str_remove(.x, "X") %>% str_replace("\\.", "%") %>% str_replace("50%", "Med"))
+          }
+        )
+    } else if (med) {# si pas de quantiles mais que quand meme mediane
+      fonc[[length(fonc) + 1]] <- list(Mediane = function(x) {quantile(x, probs = 0.5, na.rm = TRUE)})
+    }
+    # on a une liste de liste alors qu'on veut qu'une liste
+    fonc <- unlist(fonc)
+
+    # on enleve ou non les NA de la variable quali
+    tab <- data
+    if (!NR) {
+      tab <- tab %>% filter(!is.na({{var}}))
+    }
+
+    # on cree le tableau
+    suppressWarnings(
+    tab <- tab %>%
+      # par categorie
+      group_by({{var}}) %>%
+      # on applique toutes les fonctions selectionnees a la variable quanti
+      summarise(map_dfc(fonc, ~exec(.x, {{var_princ}})))
+    )
+
+    # anova = cas particulier car pas de tri en fonction de la modalite
+    if (anova) {
+      f <- as.formula(paste0(nom_princ, "~", nom))
+      ano <- summary(aov(f, data = data))[[1]] %>% filter(!is.na(`Pr(>F)`)) %>% pull()
+      tab <- tab %>%
+        mutate(Anova = format(ano, digits = 2, scientific = ifelse(ano < 0.001, T, F)))
+    }
+
+    if (moy) {
+      if (sum(is.na(tab$Moy)) > 0)
       warning(paste("Pas de moyenne calculee : la variable" , nom, "comporte au moins une modalite avec uniquement des non reponses au croisement avec la variable d'interet."), call. = FALSE)
     }
-    if (!med) tab <- tab %>% select(-Mediane)
-    if (!quart) tab <- tab %>% select(-c(Q1, Q3))
-    if (!minmax) tab <- tab %>% select(-c(Minimum, Maximum))
-    if (!eff) tab <- tab %>% select(-c(N, `N avec NR`))
-    if (eff == TRUE & eff_na == FALSE) tab <- tab %>% select(-`N avec NR`)
-    if (!NR) tab <- tab %>% filter(!Personne)
-    if (sum(is.na(tab$`IC-`)) > 0) {
-      warning(paste("Pas d'ecart-type ou d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une seule reponse pour la variable d'interet."), call. = FALSE)
+
+    if (sd & ic) {
+      if (sum(is.na(tab$SD)) > 0)
+      warning(paste("Pas d'ecart-type ou d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une unique reponse au croisement de la variable d'interet."), call. = FALSE)
+    } else if (sd) {
+      if (sum(is.na(tab$SD)) > 0)
+      warning(paste("Pas d'ecart-type calcules : la variable" , nom, "comporte au moins une modalite avec une unique reponse au croisement de la variable d'interet."), call. = FALSE)
+    } else if (ic) {
+      if (sum(is.na(tab$`IC-`)) > 0)
+      warning(paste("Pas d'intervalle de confiance calcules : la variable" , nom, "comporte au moins une modalite avec une unique reponse au croisement de la variable d'interet."), call. = FALSE)
     }
-    if (sum(is.na(tab$Moyenne)) > 0) {
-      warning(paste("Pas de moyenne calculee : la variable" , nom, "comporte au moins une modalite avec que des non reponses pour la variable d'interet."), call. = FALSE)
+    if (msg) {
+      message(paste(nom, "------------------ OK"))
     }
-    tab %>% select(-Personne)
+
+    tab %>%
+      rename(Modalite = 1) %>%
+      mutate(Modalite = as.character(Modalite))
+
   }
   # d'abord le dataframe avec uniquement les variables souhaitées :
   data_vars <- data %>% select(...)

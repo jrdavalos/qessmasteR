@@ -28,6 +28,7 @@ Imports:
   purrr,
   janitor,
   gmodels,
+  DescTools,
   FactoMineR
 Depends: 
     R (>= 3.4)

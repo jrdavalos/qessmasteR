@@ -9,16 +9,18 @@ multi_quanti(
   var_princ,
   ...,
   moy = TRUE,
+  anova = TRUE,
   sd = TRUE,
   ic = TRUE,
   ic_seuil = 0.05,
   nb = 2,
   med = TRUE,
-  quart = TRUE,
+  quant = 4,
   minmax = TRUE,
   eff = TRUE,
   eff_na = FALSE,
-  NR = TRUE
+  NR = FALSE,
+  msg = FALSE
 )
 }
 \arguments{
@@ -30,6 +32,8 @@ multi_quanti(
 
 \item{moy}{TRUE par défaut. Moyenne par modalité.}
 
+\item{anova}{TRUE par défaut. Réalise un ANOVA et retourne sa p-value.}
+
 \item{sd}{TRUE par défaut. Écart-type par modalité.}
 
 \item{ic}{TRUE par défaut. Intervalle de confiance de la moyenne par modalité. N'apparait pas si moy = FALSE}
@@ -40,15 +44,17 @@ multi_quanti(
 
 \item{med}{TRUE par défaut. Médiane par modalité.}
 
-\item{quart}{TRUE par défaut. Quartiles Q1 et Q3 par modalité.}
+\item{quant}{TRUE par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin.}
 
 \item{minmax}{TRUE par défaut. Minimum et maximum par modalité.}
 
 \item{eff}{TRUE par défaut. Effectifs par modalité.}
 
-\item{eff_na}{FALSE par défaut. Effectifs par modalité en comptant les non-réponses à la place des effectifs. N'apparait pas si eff = FALSE}
+\item{eff_na}{FALSE par défaut. Effectifs des non-réponses dans la variable quantitative par modalité.}
 
-\item{NR}{TRUE par défaut. Supprime les non-réponses}
+\item{NR}{FALSE par défaut. Garde les non-réponses des variables catégorielles.}
+
+\item{msg}{FALSE par défaut. Envoie un message pour chaque variable terminée : utile si bug inexpliqué.}
 }
 \value{
 Un tibble avec en colonne les indicateurs synthétiques de la variable d'intérêt selon les modalités des variables catégorielles choisies.
