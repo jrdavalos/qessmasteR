@@ -14,11 +14,11 @@ desc_quanti(
   ic_seuil = 0.05,
   nb = 2,
   med = TRUE,
-  quart = TRUE,
+  quant = 4,
   minmax = TRUE,
   eff = TRUE,
   eff_na = FALSE,
-  NR = TRUE
+  NR = FALSE
 )
 }
 \arguments{
@@ -40,7 +40,7 @@ desc_quanti(
 
 \item{med}{TRUE par défaut. Médiane de l'échantillon}
 
-\item{quart}{TRUE par défaut. Quartiles Q1 et Q3 de l'échantillon.}
+\item{quant}{4 par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin.}
 
 \item{minmax}{TRUE par défaut. Minimum et maximum .}
 
@@ -48,7 +48,7 @@ desc_quanti(
 
 \item{eff_na}{FALSE par défaut. Remplace les effectifs par les effectifs avec les NA. N'apparait pas si eff = FALSE}
 
-\item{NR}{TRUE par défaut. Supprime les non-réponses.}
+\item{NR}{FALSE par défaut. Garde les non-réponses.}
 }
 \value{
 un data.frame avec les indicateurs sélectionnés pour les variables quantitatives choisies
