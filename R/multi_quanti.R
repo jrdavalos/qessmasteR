@@ -13,7 +13,7 @@
 #' @param ic_seuil risque de première espèce pour l'intervalle de confiance.
 #' @param nb nombre de décimales pour la moyenne, l'écart-type et l'intervalle de confiance.
 #' @param med TRUE par défaut. Médiane par modalité.
-#' @param quant TRUE par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin.
+#' @param quant 4 par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin.
 #' @param minmax TRUE par défaut. Minimum et maximum par modalité.
 #' @param eff TRUE par défaut. Effectifs par modalité.
 #' @param eff_na FALSE par défaut. Effectifs des non-réponses dans la variable quantitative par modalité.
@@ -81,6 +81,9 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, anova = TRUE, sd = TR
         val_quant <- c(val_quant, 0.5)
         val_quant <- val_quant[order(val_quant)]
       }
+      if (!med) {# on enleve la mediane
+        val_quant <- val_quant[val_quant != .5]
+      }
       val_quant <- val_quant[-c(1, length(val_quant))]
       med <- FALSE # pour pas la faire deux fois
       fonc[[length(fonc) + 1]] <- list(Quantiles = function(x) {
@@ -99,7 +102,12 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, anova = TRUE, sd = TR
     # on enleve ou non les NA de la variable quali
     tab <- data
     if (!NR) {
+      tab1 <- tab
       tab <- tab %>% filter(!is.na({{var}}))
+      if (nrow(tab) == 0) {
+        warning(paste(nom, " ne contient que des non-reponses, elles sont gardees pour cette variable."), call. = FALSE)
+        tab <- tab1
+      }
     }
 
     # on cree le tableau

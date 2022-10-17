@@ -44,7 +44,7 @@ multi_quanti(
 
 \item{med}{TRUE par défaut. Médiane par modalité.}
 
-\item{quant}{TRUE par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin.}
+\item{quant}{4 par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin.}
 
 \item{minmax}{TRUE par défaut. Minimum et maximum par modalité.}
 
