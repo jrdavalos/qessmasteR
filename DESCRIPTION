@@ -27,7 +27,6 @@ Imports:
   tibble,
   purrr,
   janitor,
-  gmodels,
   DescTools,
   FactoMineR
 Depends: 

@@ -42,8 +42,9 @@ desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = TRUE, ic =
     data_vars <- data %>% select(everything() & where(is.numeric))
   }
   if (!(data_vars %>% every(is.numeric))) {
+    list_num <- data_vars %>% select(!where(is.numeric)) %>% names()
     data_vars <- data_vars %>% keep(is.numeric)
-    warning(paste0("Variable(s) ignoree(s) car non-numerique(s) : ", paste(names(list_num)[which(!list_num)], collapse = ", ")))
+    warning(paste0("Variable(s) ignoree(s) car non-numerique(s) : ", paste(list_num, collapse = ", ")), call. = FALSE)
   }
   # liste des noms :
   list_vars <- map(set_names(names(data_vars)), ~ quo(!!as.name(.x)))

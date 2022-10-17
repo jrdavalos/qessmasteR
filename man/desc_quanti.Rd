@@ -18,7 +18,8 @@ desc_quanti(
   minmax = TRUE,
   eff = TRUE,
   eff_na = FALSE,
-  NR = FALSE
+  NR = FALSE,
+  msg = FALSE
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ desc_quanti(
 \item{eff_na}{FALSE par défaut. Remplace les effectifs par les effectifs avec les NA. N'apparait pas si eff = FALSE}
 
 \item{NR}{FALSE par défaut. Garde les non-réponses.}
+
+\item{msg}{FALSE par défaut. Envoie un message pour chaque variable terminée : utile si bug inexpliqué.}
 }
 \value{
 un data.frame avec les indicateurs sélectionnés pour les variables quantitatives choisies
