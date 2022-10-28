@@ -31,7 +31,7 @@ desc_quanti(
 
 \item{sd}{TRUE par défaut. Ecart-type de l'échantillon}
 
-\item{test.norm}{TRUE par défaut. P-value du test de normalité de l'échantillon (test de Shapiro-Wilk).}
+\item{test.norm}{TRUE par défaut. P-value du test de normalité de l'échantillon (test de Shapiro-Wilk). Si la p-value est en dessous de votre seuil de significativité alors, l'hypothèse de normalité n'est pas retenue.}
 
 \item{ic}{TRUE par défaut. Intervalle de confiance de la moyenne. N'apparait pas si moy = FALSE}
 
