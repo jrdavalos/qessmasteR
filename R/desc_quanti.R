@@ -7,7 +7,7 @@
 #' @param ... variables souhaitées
 #' @param moy TRUE par défaut. Moyenne de l'échantillon. Si FALSE, alors pas non plus d'écart-type.
 #' @param sd TRUE par défaut. Ecart-type de l'échantillon
-#' @param test.norm TRUE par défaut. P-value du test de normalité de l'échantillon (test de Shapiro-Wilk).
+#' @param test.norm TRUE par défaut. P-value du test de normalité de l'échantillon (test de Shapiro-Wilk). Si la p-value est en dessous de votre seuil de significativité alors, l'hypothèse de normalité n'est pas retenue.
 #' @param ic TRUE par défaut. Intervalle de confiance de la moyenne. N'apparait pas si moy = FALSE
 #' @param ic_seuil risque de première espèce pour l'intervalle de confiance.
 #' @param nb 1 par défaut. Nombre de décimales.
