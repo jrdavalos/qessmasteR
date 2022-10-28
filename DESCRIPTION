@@ -23,6 +23,7 @@ Imports:
   tidyr,
   tidyselect,
   rlang,
+  car,
   stringr,
   tibble,
   purrr,

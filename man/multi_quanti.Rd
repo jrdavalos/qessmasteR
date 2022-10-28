@@ -9,7 +9,8 @@ multi_quanti(
   var_princ,
   ...,
   moy = TRUE,
-  anova = TRUE,
+  test.diffmoy = TRUE,
+  ic_test = 0.05,
   sd = TRUE,
   ic = TRUE,
   ic_seuil = 0.05,
@@ -32,7 +33,13 @@ multi_quanti(
 
 \item{moy}{TRUE par défaut. Moyenne par modalité.}
 
-\item{anova}{TRUE par défaut. Réalise un ANOVA et retourne sa p-value.}
+\item{test.diffmoy}{TRUE par défaut. Réalise un ANOVA et retourne la p-value du test d'égalité des moyennes adapté.
+La procédure est la suivante: on réalise une ANOVA et un test de Shapiro-Wilk (normalité) sur celle-ci.
+Si la normalité des résidus est rejetée alors le résultat final est un test de Kruskal-Wallis (on aura alors P(K)).
+Si elle ne l'est pas alors on réalise un test de Levene (homoscédasticité).
+Si l'homoscédasticité est rejetée alors le résultat final est un ANOVA de Welch (on aura alors P(W)), sinon on conserve l'ANOVA (on aura alors P(A)).}
+
+\item{ic_test}{risque de première espèce des tests de d'égalité des moyennes.}
 
 \item{sd}{TRUE par défaut. Écart-type par modalité.}
 

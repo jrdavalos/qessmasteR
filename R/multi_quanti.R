@@ -7,7 +7,12 @@
 #' @param var_princ variable principale (quantitative, en colonnes)
 #' @param ... variables catégorielles à croiser avec la variable principale (en lignes)
 #' @param moy TRUE par défaut. Moyenne par modalité.
-#' @param anova TRUE par défaut. Réalise un ANOVA et retourne sa p-value.
+#' @param test.diffmoy TRUE par défaut. Réalise un ANOVA et retourne la p-value du test d'égalité des moyennes adapté.
+#' La procédure est la suivante: on réalise une ANOVA et un test de Shapiro-Wilk (normalité) sur celle-ci.
+#' Si la normalité des résidus est rejetée alors le résultat final est un test de Kruskal-Wallis (on aura alors P(K)).
+#' Si elle ne l'est pas alors on réalise un test de Levene (homoscédasticité).
+#' Si l'homoscédasticité est rejetée alors le résultat final est un ANOVA de Welch (on aura alors P(W)), sinon on conserve l'ANOVA (on aura alors P(A)).
+#' @param ic_test risque de première espèce des tests de d'égalité des moyennes.
 #' @param sd TRUE par défaut. Écart-type par modalité.
 #' @param ic TRUE par défaut. Intervalle de confiance de la moyenne par modalité. N'apparait pas si moy = FALSE
 #' @param ic_seuil risque de première espèce pour l'intervalle de confiance.
@@ -29,9 +34,10 @@
 #' @importFrom purrr map_dfr map2_dfc
 #' @importFrom dplyr %>% group_by summarise select rename filter n pull rename_with
 #' @importFrom DescTools MeanCI
+#' @importFrom car leveneTest
 
-multi_quanti <- function(data, var_princ, ..., moy = TRUE, anova = TRUE, sd = TRUE, ic = TRUE, ic_seuil = 0.05, nb = 2, med = TRUE,
-                         quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, NR = FALSE, msg = FALSE) {
+multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, ic_test = 0.05, sd = TRUE, ic = TRUE, ic_seuil = 0.05,
+                         nb = 2, med = TRUE, quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, NR = FALSE, msg = FALSE) {
   if (!moy) {
     ic <- FALSE
     sd <- FALSE
@@ -120,11 +126,34 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, anova = TRUE, sd = TR
     )
 
     # anova = cas particulier car pas de tri en fonction de la modalite
-    if (anova) {
+    if (test.diffmoy) {
+      # on cree l'ANOVA
       f <- as.formula(paste0(nom_princ, "~", nom))
-      ano <- summary(aov(f, data = data))[[1]] %>% filter(!is.na(`Pr(>F)`)) %>% pull()
+      ano <- aov(f, data = data)
+      # les residus ont-ils une distribution normale ?
+      normal <- shapiro.test(residuals(ano))$p.value
+
+      if (normal < ic_test) {# cas ou les residus ne suivent pas une loi normale
+        # test de Kruskal-Wallis
+        pval.test <- stats::kruskal.test(f, data = data)$p.value
+        quel.test <- "P(K) ="
+      } else {
+        # on doit savoir si les donnees sont homoscedastiques
+        homoscedas <- leveneTest(f, data = data)[1, "Pr(>F)"]
+
+        if (homoscedas < ic_test) {# cas ou le modele n'est pas homoscedastique
+          # ANOVA de Welch (variances differentes selon les groupes)
+          pval.test <- stats::oneway.test(f, data = data)$p.value
+          quel.test <- "P(W) ="
+        } else {
+          # dans le dernier cas, on garde l'ANOVA
+          pval.test <- summary(ano)[[1]][1, "Pr(>F)"]
+          quel.test <- "P(A) ="
+        }
+      }
+
       tab <- tab %>%
-        mutate(Anova = format(ano, digits = 2, scientific = ifelse(ano < 0.001, T, F)))
+        mutate(Test = paste(quel.test, format(pval.test, digits = 2, scientific = ifelse(pval.test < 0.001, T, F))))
     }
 
     if (moy) {
