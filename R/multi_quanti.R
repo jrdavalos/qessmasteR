@@ -12,6 +12,8 @@
 #' Si la normalité des résidus est rejetée alors le résultat final est un test de Kruskal-Wallis (on aura alors P(K)).
 #' Si elle ne l'est pas alors on réalise un test de Levene (homoscédasticité).
 #' Si l'homoscédasticité est rejetée alors le résultat final est un ANOVA de Welch (on aura alors P(W)), sinon on conserve l'ANOVA (on aura alors P(A)).
+#' @param force_anova Permet de forcer la fonction à considérer la distribution comme normale. Vecteur des noms des variables catégorielles pour lesquelles forcer.
+#' Peut être utile si on considère que la distribution est malgré tout suffisamment proche d'une distribution normale pour ne pas avoir d'incidence sur l'analyse.
 #' @param ic_test risque de première espèce des tests de d'égalité des moyennes.
 #' @param sd TRUE par défaut. Écart-type par modalité.
 #' @param ic TRUE par défaut. Intervalle de confiance de la moyenne par modalité. N'apparait pas si moy = FALSE
@@ -36,8 +38,8 @@
 #' @importFrom DescTools MeanCI
 #' @importFrom car leveneTest
 
-multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, ic_test = 0.05, sd = TRUE, ic = TRUE, ic_seuil = 0.05,
-                         nb = 2, med = TRUE, quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, NR = FALSE, msg = FALSE) {
+multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, force_anova = NULL, ic_test = 0.05, sd = TRUE,
+                         ic = TRUE, ic_seuil = 0.05, nb = 2, med = TRUE, quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, NR = FALSE, msg = FALSE) {
   if (!moy) {
     ic <- FALSE
     sd <- FALSE
@@ -133,18 +135,22 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
       # les residus ont-ils une distribution normale ?
       normal <- shapiro.test(residuals(ano))$p.value
 
-      if (normal < ic_test) {# cas ou les residus ne suivent pas une loi normale
+      if (normal < ic_test & !(nom %in% force_anova)) {# cas ou les residus ne suivent pas une loi normale
         # test de Kruskal-Wallis
         pval.test <- stats::kruskal.test(f, data = data)$p.value
         quel.test <- "P(K) ="
+        message(paste("Les groupes constitues par la variable", nom,
+                      "ne semblent pas avoir une distribution normale. On realise un test de Kruskal-Wallis."))
       } else {
         # on doit savoir si les donnees sont homoscedastiques
-        homoscedas <- leveneTest(f, data = data)[1, "Pr(>F)"]
+        suppressWarnings(homoscedas <- leveneTest(f, data = data)[1, "Pr(>F)"])
 
         if (homoscedas < ic_test) {# cas ou le modele n'est pas homoscedastique
           # ANOVA de Welch (variances differentes selon les groupes)
           pval.test <- stats::oneway.test(f, data = data)$p.value
           quel.test <- "P(W) ="
+          message(paste("Les groupes constitues par la variable", nom,
+                        "ne semblent pas avoir une variance homogene. On realise une ANOVA de Welch."))
         } else {
           # dans le dernier cas, on garde l'ANOVA
           pval.test <- summary(ano)[[1]][1, "Pr(>F)"]
@@ -158,7 +164,9 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
 
     if (moy) {
       if (sum(is.na(tab$Moy)) > 0)
-      warning(paste("Pas de moyenne calculee : la variable" , nom, "comporte au moins une modalite avec uniquement des non reponses au croisement avec la variable d'interet."), call. = FALSE)
+      warning(paste("Pas de moyenne calculee : la variable" , nom,
+                    "comporte au moins une modalite avec uniquement des non reponses au croisement avec la variable d'interet."),
+              call. = FALSE)
     }
 
     if (sd & ic) {

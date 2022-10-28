@@ -10,6 +10,7 @@ multi_quanti(
   ...,
   moy = TRUE,
   test.diffmoy = TRUE,
+  force_anova = NULL,
   ic_test = 0.05,
   sd = TRUE,
   ic = TRUE,
@@ -38,6 +39,9 @@ La procédure est la suivante: on réalise une ANOVA et un test de Shapiro-Wilk 
 Si la normalité des résidus est rejetée alors le résultat final est un test de Kruskal-Wallis (on aura alors P(K)).
 Si elle ne l'est pas alors on réalise un test de Levene (homoscédasticité).
 Si l'homoscédasticité est rejetée alors le résultat final est un ANOVA de Welch (on aura alors P(W)), sinon on conserve l'ANOVA (on aura alors P(A)).}
+
+\item{force_anova}{Permet de forcer la fonction à considérer la distribution comme normale. Vecteur des noms des variables catégorielles pour lesquelles forcer.
+Peut être utile si on considère que la distribution est malgré tout suffisamment proche d'une distribution normale pour ne pas avoir d'incidence sur l'analyse.}
 
 \item{ic_test}{risque de première espèce des tests de d'égalité des moyennes.}
 
