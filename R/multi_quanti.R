@@ -14,6 +14,7 @@
 #' Si l'homoscédasticité est rejetée alors le résultat final est un ANOVA de Welch (on aura alors P(W)), sinon on conserve l'ANOVA (on aura alors P(A)).
 #' @param force_anova Permet de forcer la fonction à considérer la distribution comme normale. Vecteur des noms des variables catégorielles pour lesquelles forcer.
 #' Peut être utile si on considère que la distribution est malgré tout suffisamment proche d'une distribution normale pour ne pas avoir d'incidence sur l'analyse.
+#' Peut prendre la valeur TRUE si on veut forcer pour toutes les variables.
 #' @param ic_test risque de première espèce des tests de d'égalité des moyennes.
 #' @param sd TRUE par défaut. Écart-type par modalité.
 #' @param ic TRUE par défaut. Intervalle de confiance de la moyenne par modalité. N'apparait pas si moy = FALSE
@@ -194,6 +195,10 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
   list_vars <- map(set_names(names(data_vars)), ~ quo(!!as.name(.x)))
   if (length(list_vars) == 0) {
     stop(paste("Pas de variable a croiser avec", deparse(substitute(var_princ))))
+  }
+  # on voit si force_anova = TRUE
+  if (force_anova) {
+    force_anova <- names(data_vars)
   }
   # on applique nos fonctions à la list :
   map_dfr(list_vars, ~sommaire(!!.x), .id = "Variable")
