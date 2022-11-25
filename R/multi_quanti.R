@@ -197,6 +197,9 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
     stop(paste("Pas de variable a croiser avec", deparse(substitute(var_princ))))
   }
   # on voit si force_anova = TRUE
+  if (is.null(force_anova)) {
+    force_anova <- FALSE
+  }
   if (force_anova) {
     force_anova <- names(data_vars)
   }
