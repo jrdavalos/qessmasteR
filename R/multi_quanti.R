@@ -8,7 +8,7 @@
 #' @param ... variables catégorielles à croiser avec la variable principale (en lignes)
 #' @param moy TRUE par défaut. Moyenne par modalité.
 #' @param test.diffmoy TRUE par défaut. Réalise un ANOVA et retourne la p-value du test d'égalité des moyennes adapté.
-#' La procédure est la suivante: on réalise une ANOVA et un test de Shapiro-Wilk (normalité) sur celle-ci.
+#' La procédure est la suivante: on réalise une ANOVA et un test de Shapiro-Wilk (test de normalité, remplacé par un test de Kolmogorov-Smirnov si l'effectif est supérieur à 5000 étant donné que le test de Shapiro-Wilk est sensible aux grands effectifs) sur celle-ci.
 #' Si la normalité des résidus est rejetée alors le résultat final est un test de Kruskal-Wallis (on aura alors P(K)).
 #' Si elle ne l'est pas alors on réalise un test de Levene (homoscédasticité).
 #' Si l'homoscédasticité est rejetée alors le résultat final est un ANOVA de Welch (on aura alors P(W)), sinon on conserve l'ANOVA (on aura alors P(A)).
@@ -24,14 +24,16 @@
 #' @param quant 4 par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin.
 #' @param minmax TRUE par défaut. Minimum et maximum par modalité.
 #' @param eff TRUE par défaut. Effectifs par modalité.
+#' @param freq TRUE par défaut. Fréquence par modalité.
 #' @param eff_na FALSE par défaut. Effectifs des non-réponses dans la variable quantitative par modalité.
 #' @param NR FALSE par défaut. Garde les non-réponses des variables catégorielles.
 #' @param msg FALSE par défaut. Envoie un message pour chaque variable terminée : utile si bug inexpliqué.
+#' @param etoiles FALSE par défaut. Permet d'afficher les résultats des tests avec des étoiles à la place de la p.value en clair.
 #'
 #' @return Un tibble avec en colonne les indicateurs synthétiques de la variable d'intérêt selon les modalités des variables catégorielles choisies.
 #' @export
 #'
-#' @importFrom stats quantile aov
+#' @importFrom stats quantile aov ks.test shapiro.test
 #' @importFrom rlang set_names quo
 #' @importFrom stringr str_remove str_replace
 #' @importFrom purrr map_dfr map2_dfc
@@ -39,8 +41,9 @@
 #' @importFrom DescTools MeanCI
 #' @importFrom car leveneTest
 
-multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, force_anova = NULL, ic_test = 0.05, sd = TRUE,
-                         ic = TRUE, ic_seuil = 0.05, nb = 2, med = TRUE, quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, NR = FALSE, msg = FALSE) {
+multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, force_anova = NULL, ic_test = 0.05, sd = TRUE, ic = TRUE,
+                         ic_seuil = 0.05, nb = 2, med = TRUE, quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, freq = TRUE, etoiles = FALSE,
+                         NR = FALSE, msg = FALSE) {
   if (!moy) {
     ic <- FALSE
     sd <- FALSE
@@ -61,6 +64,9 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
     fonc <- list()
     if (eff) {# effectifs ou non
       fonc[[length(fonc) + 1]] <- list(N = function(x) {sum(!is.na(x))})
+    }
+    if (freq) {
+      fonc[[length(fonc) +1]] <- list(Freq = function(x) {round(100 * sum(!is.na(x)) / nrow(data), nb)})
     }
     if (eff_na) {# nombre de NA de la variable quanti ou non
       fonc[[length(fonc) + 1]] <- list(NR = function(x) {sum(is.na(x))})
@@ -105,7 +111,7 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
     } else if (med) {# si pas de quantiles mais que quand meme mediane
       fonc[[length(fonc) + 1]] <- list(Mediane = function(x) {quantile(x, probs = 0.5, na.rm = TRUE)})
     }
-    # on a une liste de liste alors qu'on veut qu'une liste
+    # on a une liste de listes alors qu'on veut qu'une liste
     fonc <- unlist(fonc)
 
     # on enleve ou non les NA de la variable quali
@@ -134,7 +140,10 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
       f <- as.formula(paste0(nom_princ, "~", nom))
       ano <- aov(f, data = data)
       # les residus ont-ils une distribution normale ?
-      normal <- shapiro.test(residuals(ano))$p.value
+      residus <- residuals(ano)
+      if (length(residus) > 5000) {
+        normal <- ks.test(residus, "pnorm", mean = mean(residus), sd(residus))$p.value
+      } else normal <- shapiro.test(residus)$p.value
 
       if (normal < ic_test & !(nom %in% force_anova)) {# cas ou les residus ne suivent pas une loi normale
         # test de Kruskal-Wallis
@@ -158,9 +167,16 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
           quel.test <- "P(A) ="
         }
       }
-
-      tab <- tab %>%
-        mutate(Test = paste(quel.test, format(pval.test, digits = 2, scientific = ifelse(pval.test < 0.001, T, F))))
+      if (etoiles) {
+        tab <- tab %>%
+          mutate(Signif = case_when(pval.test < 0.01 ~ "***",
+                                    pval.test < 0.05 ~ "**",
+                                    pval.test < 0.1 ~ "*",
+                                    TRUE ~ ""))
+      } else {
+        tab <- tab %>%
+          mutate(Test = paste(quel.test, format(pval.test, digits = 2, scientific = ifelse(pval.test < 0.001, T, F))))
+      }
     }
 
     if (moy) {

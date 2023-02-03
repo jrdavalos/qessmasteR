@@ -21,6 +21,8 @@ multi_quanti(
   minmax = TRUE,
   eff = TRUE,
   eff_na = FALSE,
+  freq = TRUE,
+  etoiles = FALSE,
   NR = FALSE,
   msg = FALSE
 )
@@ -35,13 +37,14 @@ multi_quanti(
 \item{moy}{TRUE par défaut. Moyenne par modalité.}
 
 \item{test.diffmoy}{TRUE par défaut. Réalise un ANOVA et retourne la p-value du test d'égalité des moyennes adapté.
-La procédure est la suivante: on réalise une ANOVA et un test de Shapiro-Wilk (normalité) sur celle-ci.
+La procédure est la suivante: on réalise une ANOVA et un test de Shapiro-Wilk (test de normalité, remplacé par un test de Kolmogorov-Smirnov si l'effectif est supérieur à 5000 étant donné que le test de Shapiro-Wilk est sensible aux grands effectifs) sur celle-ci.
 Si la normalité des résidus est rejetée alors le résultat final est un test de Kruskal-Wallis (on aura alors P(K)).
 Si elle ne l'est pas alors on réalise un test de Levene (homoscédasticité).
 Si l'homoscédasticité est rejetée alors le résultat final est un ANOVA de Welch (on aura alors P(W)), sinon on conserve l'ANOVA (on aura alors P(A)).}
 
 \item{force_anova}{Permet de forcer la fonction à considérer la distribution comme normale. Vecteur des noms des variables catégorielles pour lesquelles forcer.
-Peut être utile si on considère que la distribution est malgré tout suffisamment proche d'une distribution normale pour ne pas avoir d'incidence sur l'analyse.}
+Peut être utile si on considère que la distribution est malgré tout suffisamment proche d'une distribution normale pour ne pas avoir d'incidence sur l'analyse.
+Peut prendre la valeur TRUE si on veut forcer pour toutes les variables.}
 
 \item{ic_test}{risque de première espèce des tests de d'égalité des moyennes.}
 
@@ -62,6 +65,10 @@ Peut être utile si on considère que la distribution est malgré tout suffisamm
 \item{eff}{TRUE par défaut. Effectifs par modalité.}
 
 \item{eff_na}{FALSE par défaut. Effectifs des non-réponses dans la variable quantitative par modalité.}
+
+\item{freq}{TRUE par défaut. Fréquence par modalité.}
+
+\item{etoiles}{FALSE par défaut. Permet d'afficher les résultats des tests avec des étoiles à la place de la p.value en clair.}
 
 \item{NR}{FALSE par défaut. Garde les non-réponses des variables catégorielles.}
 
