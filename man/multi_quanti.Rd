@@ -22,7 +22,7 @@ multi_quanti(
   eff = TRUE,
   eff_na = FALSE,
   freq = TRUE,
-  etoiles = FALSE,
+  signif = NULL,
   NR = FALSE,
   msg = FALSE
 )
@@ -68,7 +68,7 @@ Peut prendre la valeur TRUE si on veut forcer pour toutes les variables.}
 
 \item{freq}{TRUE par défaut. Fréquence par modalité.}
 
-\item{etoiles}{FALSE par défaut. Permet d'afficher les résultats des tests avec des étoiles à la place de la p.value en clair.}
+\item{signif}{NULL par défaut, prend les valeurs 'etoiles' ou 'seuils'. Permet d'afficher les résultats des tests avec des étoiles ou avec des seuils à la place de la p.value en clair.}
 
 \item{NR}{FALSE par défaut. Garde les non-réponses des variables catégorielles.}
 
