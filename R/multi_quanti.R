@@ -28,7 +28,7 @@
 #' @param eff_na FALSE par défaut. Effectifs des non-réponses dans la variable quantitative par modalité.
 #' @param NR FALSE par défaut. Garde les non-réponses des variables catégorielles.
 #' @param msg FALSE par défaut. Envoie un message pour chaque variable terminée : utile si bug inexpliqué.
-#' @param etoiles FALSE par défaut. Permet d'afficher les résultats des tests avec des étoiles à la place de la p.value en clair.
+#' @param signif NULL par défaut, prend les valeurs 'etoiles' ou 'seuils'. Permet d'afficher les résultats des tests avec des étoiles ou avec des seuils à la place de la p.value en clair.
 #'
 #' @return Un tibble avec en colonne les indicateurs synthétiques de la variable d'intérêt selon les modalités des variables catégorielles choisies.
 #' @export
@@ -42,8 +42,8 @@
 #' @importFrom car leveneTest
 
 multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, force_anova = NULL, ic_test = 0.05, sd = TRUE, ic = TRUE,
-                         ic_seuil = 0.05, nb = 2, med = TRUE, quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, freq = TRUE, etoiles = FALSE,
-                         NR = FALSE, msg = FALSE) {
+                         ic_seuil = 0.05, nb = 2, med = TRUE, quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, freq = TRUE,
+                         signif = NULL, NR = FALSE, msg = FALSE) {
   if (!moy) {
     ic <- FALSE
     sd <- FALSE
@@ -167,12 +167,23 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
           quel.test <- "P(A) ="
         }
       }
-      if (etoiles) {
-        tab <- tab %>%
-          mutate(Signif = case_when(pval.test < 0.01 ~ "***",
-                                    pval.test < 0.05 ~ "**",
-                                    pval.test < 0.1 ~ "*",
-                                    TRUE ~ ""))
+      if (!is.null(signif)) {
+        if (!(signif %in% c("etoiles", "seuils"))) {
+          warning("signif n'a pas le bon argument ('etoiles' ou 'seuils'), il est ignore ici.")
+        } else if (signif == "etoiles") {
+          tab <- tab %>%
+            mutate(P.val = case_when(pval.test < 0.01 ~ "***",
+                                      pval.test < 0.05 ~ "**",
+                                      pval.test < 0.1 ~ "*",
+                                      TRUE ~ ""))
+        } else if (signif == "seuils") {
+          tab <-tab %>%
+            mutate(P.val = case_when(pval.test < 0.001 ~ "< 0.001",
+                                     pval.test < 0.01 ~ "< 0.01",
+                                     pval.test < 0.05 ~ "< 0.05",
+                                     pval.test < 0.1 ~ " < 0.1",
+                                     TRUE ~ ""))
+        }
       } else {
         tab <- tab %>%
           mutate(Test = paste(quel.test, format(pval.test, digits = 2, scientific = ifelse(pval.test < 0.001, T, F))))
