@@ -98,7 +98,7 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, nb = 1, cum_freq = FA
         bind_rows(summarise(., across(where(is.numeric), sum), across(!where(is.numeric), ~'Total')))
       if (cum_freq) {
         tab <- tab %>%
-          mutate(`Frequence cumulee` = case_when(Modalite = 'Total' ~ NA, TRUE ~ `Frequence cumulee`))
+          mutate(`Frequence cumulee` = case_when(Modalite == 'Total' ~ NA, TRUE ~ `Frequence cumulee`))
       }
     }
     tab %>% mutate(across(where(is.numeric), ~round(.x, nb)))
