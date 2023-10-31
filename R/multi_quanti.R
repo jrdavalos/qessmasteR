@@ -36,7 +36,7 @@
 #' @importFrom stats quantile aov ks.test shapiro.test
 #' @importFrom rlang set_names quo
 #' @importFrom stringr str_remove str_replace
-#' @importFrom purrr map_dfr map2_dfc
+#' @importFrom purrr map map_dfc list_rbind
 #' @importFrom dplyr %>% group_by summarise select rename filter n pull rename_with
 #' @importFrom DescTools MeanCI
 #' @importFrom car leveneTest
@@ -231,7 +231,8 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
     force_anova <- names(data_vars)
   }
   # on applique nos fonctions à la list :
-  map_dfr(list_vars, ~sommaire(!!.x), .id = "Variable")
+  map(list_vars, ~sommaire(!!.x), .id = "Variable") %>%
+    list_rbind()
 }
 
 

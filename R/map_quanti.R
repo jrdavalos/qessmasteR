@@ -33,7 +33,9 @@
 #' @export
 #'
 #' @importFrom purrr map list_rbind
-#' @importFrom dplyr where
+#' @importFrom rlang set_names quo
+#' @importFrom dplyr select
+#' @importFrom tidyselect where
 
 map_quanti <- function(data, ..., moy = TRUE, test.diffmoy = TRUE, force_anova = NULL, ic_test = 0.05, sd = TRUE, ic = TRUE,
                        ic_seuil = 0.05, nb = 2, med = TRUE, quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, freq = TRUE,
