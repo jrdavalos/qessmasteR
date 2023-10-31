@@ -51,11 +51,13 @@ map_quanti <- function(data, ..., moy = TRUE, test.diffmoy = TRUE, force_anova =
     stop(paste("Pas de variable categorielle !"))
   }
   # on applique multi_quanti à la liste :
-  map(list_vars_num,
-      ~multi_quanti(data, !!.x, list_vars_cat,
-                    moy = moy, test.diffmoy = test.diffmoy, force_anova = force_anova, ic_test = ic_test, sd = sd, ic = ic,
-                    ic_seuil = ic_seuil, nb = nb, med = med, quant = quant, minmax = minmax, eff = eff, eff_na = eff_na,
-                    freq = freq, signif = signif, NR = NR, msg = msg)) %>%
-    list_rbind()
+  map(list_vars_num, function(x) {
+    map(list_vars_cat, function(y) {
+      multi_quanti(data, !!x, !!y,
+                   moy = moy, test.diffmoy = test.diffmoy, force_anova = force_anova, ic_test = ic_test, sd = sd, ic = ic,
+                   ic_seuil = ic_seuil, nb = nb, med = med, quant = quant, minmax = minmax, eff = eff, eff_na = eff_na,
+                   freq = freq, signif = signif, NR = NR, msg = msg)
+    })
+  }) %>% list_rbind()
 
 }
