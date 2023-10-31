@@ -182,7 +182,7 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
                                      pval.test < 0.01 ~ "< 0.01",
                                      pval.test < 0.05 ~ "< 0.05",
                                      pval.test < 0.1 ~ " < 0.1",
-                                     TRUE ~ ""))
+                                     TRUE ~ "ns"))
         }
       } else {
         tab <- tab %>%
