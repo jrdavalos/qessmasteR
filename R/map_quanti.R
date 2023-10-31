@@ -59,7 +59,9 @@ map_quanti <- function(data, ..., moy = TRUE, test.diffmoy = TRUE, force_anova =
                    moy = moy, test.diffmoy = test.diffmoy, force_anova = force_anova, ic_test = ic_test, sd = sd, ic = ic,
                    ic_seuil = ic_seuil, nb = nb, med = med, quant = quant, minmax = minmax, eff = eff, eff_na = eff_na,
                    freq = freq, signif = signif, NR = NR, msg = msg)
-    }) %>% list_rbind()
-  }) %>% list_rbind()
+    }) %>%
+      list_rbind() %>%
+      rename(`Variable categorielle` = Variable)
+  }) %>% list_rbind("Variable quantitative")
 
 }
