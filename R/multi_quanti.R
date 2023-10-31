@@ -36,7 +36,7 @@
 #' @importFrom stats quantile aov ks.test shapiro.test
 #' @importFrom rlang set_names quo
 #' @importFrom stringr str_remove str_replace
-#' @importFrom purrr map list_rbind list_cbind
+#' @importFrom purrr map_dfr map2_dfc
 #' @importFrom dplyr %>% group_by summarise select rename filter n pull rename_with
 #' @importFrom DescTools MeanCI
 #' @importFrom car leveneTest
@@ -131,7 +131,7 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
       # par categorie
       group_by({{var}}) %>%
       # on applique toutes les fonctions selectionnees a la variable quanti
-      summarise(map(fonc, ~exec(.x, {{var_princ}})) %>% list_cbind())
+      summarise(map_dfc(fonc, ~exec(.x, {{var_princ}})))
     )
 
     # anova = cas particulier car pas de tri en fonction de la modalite
@@ -231,7 +231,7 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
     force_anova <- names(data_vars)
   }
   # on applique nos fonctions à la list :
-  map(list_vars, ~sommaire(!!.x), .id = "Variable") %>% list_rbind()
+  map_dfr(list_vars, ~sommaire(!!.x), .id = "Variable")
 }
 
 
