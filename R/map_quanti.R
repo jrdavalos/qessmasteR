@@ -62,6 +62,6 @@ map_quanti <- function(data, ..., moy = TRUE, test.diffmoy = TRUE, force_anova =
     }) %>%
       list_rbind() %>%
       rename(`Variable categorielle` = Variable)
-  }) %>% list_rbind("Variable quantitative")
+  }) %>% list_rbind(names_to = "Variable quantitative")
 
 }
