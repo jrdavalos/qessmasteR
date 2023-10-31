@@ -231,8 +231,8 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
     force_anova <- names(data_vars)
   }
   # on applique nos fonctions à la list :
-  map(list_vars, ~sommaire(!!.x), .id = "Variable") %>%
-    list_rbind()
+  map(list_vars, ~sommaire(!!.x)) %>%
+    list_rbind(names_to = "Variable")
 }
 
 
