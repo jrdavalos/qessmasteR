@@ -52,7 +52,7 @@ map_quanti <- function(data, ..., moy = TRUE, test.diffmoy = TRUE, force_anova =
   }
   # on applique multi_quanti à la liste :
   map(list_vars_num,
-      ~multi_quanti(data, .x, list_vars_cat,
+      ~multi_quanti(data, !!.x, list_vars_cat,
                     moy = moy, test.diffmoy = test.diffmoy, force_anova = force_anova, ic_test = ic_test, sd = sd, ic = ic,
                     ic_seuil = ic_seuil, nb = nb, med = med, quant = quant, minmax = minmax, eff = eff, eff_na = eff_na,
                     freq = freq, signif = signif, NR = NR, msg = msg)) %>%
