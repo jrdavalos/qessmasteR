@@ -181,7 +181,7 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
             mutate(P.val = case_when(pval.test < 0.001 ~ "< 0.001",
                                      pval.test < 0.01 ~ "< 0.01",
                                      pval.test < 0.05 ~ "< 0.05",
-                                     pval.test < 0.1 ~ " < 0.1",
+                                     pval.test < 0.1 ~ "< 0.1",
                                      TRUE ~ "ns"))
         }
       } else {
