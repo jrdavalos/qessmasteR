@@ -35,6 +35,7 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, nb = 1, cum_freq = FA
   }
   # liste des noms :
   list_vars <- map(set_names(names(data_vars)), ~ quo(!!as.name(.x)))
+
   # gestion de la ponderation (si vecteur ou non + pb de longueur)
   if (!is.null(pond)) {# si pas de ponderation alors pas besoin de la normaliser
     if (nrow(data_vars) != length(pond)) {

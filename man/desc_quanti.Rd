@@ -9,7 +9,7 @@ desc_quanti(
   ...,
   moy = TRUE,
   sd = TRUE,
-  test.norm = TRUE,
+  test.norm = FALSE,
   ic = TRUE,
   ic_seuil = 0.05,
   nb = 2,
@@ -18,40 +18,43 @@ desc_quanti(
   minmax = TRUE,
   eff = TRUE,
   eff_na = FALSE,
-  NR = FALSE,
-  msg = FALSE
+  msg = FALSE,
+  pond = NULL,
+  norm_pond = TRUE
 )
 }
 \arguments{
 \item{data}{base de données}
 
-\item{...}{variables souhaitées}
+\item{...}{variables souhaitées (tidyselect)}
 
 \item{moy}{TRUE par défaut. Moyenne de l'échantillon. Si FALSE, alors pas non plus d'écart-type.}
 
 \item{sd}{TRUE par défaut. Ecart-type de l'échantillon}
 
-\item{test.norm}{TRUE par défaut. P-value du test de normalité de l'échantillon (test de Shapiro-Wilk). Si la p-value est en dessous de votre seuil de significativité alors, l'hypothèse de normalité n'est pas retenue.}
+\item{test.norm}{FALSE par défaut. P-value du test de normalité de l'échantillon (test de Shapiro-Wilk). Si la p-value est en dessous de votre seuil de significativité alors, l'hypothèse de normalité n'est pas retenue.}
 
 \item{ic}{TRUE par défaut. Intervalle de confiance de la moyenne. N'apparait pas si moy = FALSE}
 
 \item{ic_seuil}{risque de première espèce pour l'intervalle de confiance.}
 
-\item{nb}{1 par défaut. Nombre de décimales.}
+\item{nb}{2 par défaut. Nombre de décimales.}
 
 \item{med}{TRUE par défaut. Médiane de l'échantillon}
 
-\item{quant}{4 par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin.}
+\item{quant}{4 par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin. Si elle est exclue, on l'enlève des quantiles.}
 
-\item{minmax}{TRUE par défaut. Minimum et maximum .}
+\item{minmax}{TRUE par défaut. Minimum et maximum.}
 
-\item{eff}{TRUE par défaut. Effectifs.}
+\item{eff}{TRUE par défaut. Effectifs avec réponse.}
 
-\item{eff_na}{FALSE par défaut. Remplace les effectifs par les effectifs avec les NA. N'apparait pas si eff = FALSE}
-
-\item{NR}{FALSE par défaut. Garde les non-réponses.}
+\item{eff_na}{FALSE par défaut. Ajoute une colonne avec le nombre de NA. N'apparait pas si eff = FALSE}
 
 \item{msg}{FALSE par défaut. Envoie un message pour chaque variable terminée : utile si bug inexpliqué.}
+
+\item{pond}{NULL par défaut. Vecteur contenant les poids (pas de tidyselect).}
+
+\item{norm_pond}{TRUE par défaut. Normalise les poids (poids moyen = 1).}
 }
 \value{
 un data.frame avec les indicateurs sélectionnés pour les variables quantitatives choisies

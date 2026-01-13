@@ -4,33 +4,34 @@
 #' @description Permet d'obtenir les principaux indicateurs concernant un groupe de variables quantitatives
 #'
 #' @param data base de données
-#' @param ... variables souhaitées
+#' @param ... variables souhaitées (tidyselect)
 #' @param moy TRUE par défaut. Moyenne de l'échantillon. Si FALSE, alors pas non plus d'écart-type.
 #' @param sd TRUE par défaut. Ecart-type de l'échantillon
-#' @param test.norm TRUE par défaut. P-value du test de normalité de l'échantillon (test de Shapiro-Wilk). Si la p-value est en dessous de votre seuil de significativité alors, l'hypothèse de normalité n'est pas retenue.
+#' @param test.norm FALSE par défaut. P-value du test de normalité de l'échantillon (test de Shapiro-Wilk). Si la p-value est en dessous de votre seuil de significativité alors, l'hypothèse de normalité n'est pas retenue.
 #' @param ic TRUE par défaut. Intervalle de confiance de la moyenne. N'apparait pas si moy = FALSE
 #' @param ic_seuil risque de première espèce pour l'intervalle de confiance.
-#' @param nb 1 par défaut. Nombre de décimales.
+#' @param nb 2 par défaut. Nombre de décimales.
 #' @param med TRUE par défaut. Médiane de l'échantillon
-#' @param quant 4 par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin.
-#' @param minmax TRUE par défaut. Minimum et maximum .
-#' @param eff TRUE par défaut. Effectifs.
-#' @param eff_na FALSE par défaut. Remplace les effectifs par les effectifs avec les NA. N'apparait pas si eff = FALSE
-#' @param NR FALSE par défaut. Garde les non-réponses.
+#' @param quant 4 par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin. Si elle est exclue, on l'enlève des quantiles.
+#' @param minmax TRUE par défaut. Minimum et maximum.
+#' @param eff TRUE par défaut. Effectifs avec réponse.
+#' @param eff_na FALSE par défaut. Ajoute une colonne avec le nombre de NA. N'apparait pas si eff = FALSE
 #' @param msg FALSE par défaut. Envoie un message pour chaque variable terminée : utile si bug inexpliqué.
+#' @param pond NULL par défaut. Vecteur contenant les poids (pas de tidyselect).
+#' @param norm_pond TRUE par défaut. Normalise les poids (poids moyen = 1).
 #'
 #' @return un data.frame avec les indicateurs sélectionnés pour les variables quantitatives choisies
 #'
 #' @importFrom dplyr bind_rows mutate %>% filter group_by count rename select pull across summarise
 #' @importFrom tidyselect everything
-#' @importFrom stringr str_remove str_replace
+#' @importFrom stringr str_remove_all str_replace
 #' @importFrom purrr map map_dfr map_lgl keep
-#' @importFrom DescTools MeanCI
+#' @importFrom Hmisc wtd.quantile
 #'
 #' @export
 
-desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = TRUE, ic = TRUE, ic_seuil = 0.05, nb = 2, med = TRUE,
-                       quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, NR = FALSE, msg = FALSE) {
+desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = FALSE, ic = TRUE, ic_seuil = 0.05, nb = 2, med = TRUE,
+                       quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, msg = FALSE, pond = NULL, norm_pond = TRUE) {
   if (!moy) {
     ic <- FALSE
     sd <- FALSE
@@ -49,13 +50,15 @@ desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = TRUE, ic =
   # liste des noms :
   list_vars <- map(set_names(names(data_vars)), ~ quo(!!as.name(.x)))
 
-  ######### ELEMENT A GERER PLUS TARD ##########
   # gestion de la ponderation (si vecteur ou non + pb de longueur)
-  # if (!is.null(pond)) {# si pas de ponderation alors pas besoin de la normaliser
-  #   if (nrow(data_vars) != length(pond)) {
-  #     stop("Le vecteur de ponderation n'est pas de la bonne longueur.")
-  #   }
-  # } else norm_pond <- FALSE
+  if (!is.null(pond)) {# si pas de ponderation alors pas besoin de la normaliser
+    if (nrow(data_vars) != length(pond) | any(is.na(pond))) {
+      stop("Le vecteur de ponderation n'est pas de la bonne longueur ou contient des NA.")
+    }
+    if (norm_pond) {
+      pond <- pond / mean(pond)
+    }
+  }
 
   # fonction de tri a plat par variable
   desc <- function(var) {
@@ -66,52 +69,84 @@ desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = TRUE, ic =
     # on cree une fonction donnant tous les indicateurs selectionnes
     # listes ou on ajoute au fur et a mesure :
     fonc <- list()
+
     if (eff) {# effectifs ou non
       fonc[[length(fonc) + 1]] <- list(N = function(x) {sum(!is.na(x))})
     }
+
     if (eff_na) {# nombre de NA de la variable quanti ou non
       fonc[[length(fonc) + 1]] <- list(NR = function(x) {sum(is.na(x))})
     }
-    if (minmax) {
-      fonc[[length(fonc) + 1]] <- list(Min = function(x) {min(x, na.rm = TRUE)})
-      fonc[[length(fonc) + 1]] <- list(Max = function(x) {max(x, na.rm = TRUE)})
+
+    if (moy | ic | sd) {
+      # pour les indicateurs classiques on realise une regression qui est utile pour prendre en compte la ponderation
+      fonc[[length(fonc) + 1]] <- list(Stats = function(x) {
+        model <- lm(x ~ 1, data = tab, weights = pond)
+
+        # calcul de la moyenne
+        if (moy) {
+          Moy <- data.frame(Moy = coef(model) |> round(nb))
+        } else Moy <- NULL
+
+        # ecart-type ?
+        if (sd) {
+          SD <- data.frame(SD = sigma(model) |> round(nb))
+        } else SD <- NULL
+
+        # intervalle de confiance ?
+        if (ic) {
+          IC <- confint(model, level = (1 - ic_seuil)) %>%
+              round(nb) %>%
+              as.data.frame() %>%
+              rename(`IC-` = `2.5 %`, `IC+` = `97.5 %`)
+        } else IC <- NULL
+        return(bind_cols(Moy, IC, SD))
+      })
     }
-    if (ic) {# d'abord les intervalles de confiance car calcule deja la moyenne
-      fonc[[length(fonc) + 1]] <- list(Moyenne = function(x) {
-        MeanCI(x, conf.level = (1 - ic_seuil), na.rm = TRUE) %>%
-          as.list() %>%
-          as.data.frame() %>%
-          round(nb) %>%
-          rename(Moy = mean, `IC-` = lwr.ci, `IC+` = upr.ci)
+
+    if (quant > 0 | med | minmax) {
+      if (quant == 0 & med) {
+        # dans ce cas on veut deux quantiles
+        quant <- 2
       }
-      )
-    } else if (moy) {# si que moyenne alors calcul avec mean
-      fonc[[length(fonc) + 1]] <- list(Moy = function(x) {mean(x, na.rm = TRUE) %>% round(nb)})
-    }
-    if (sd) {# ecart-type
-      fonc[[length(fonc) + 1]] <- list(SD = function(x) {sd(x, na.rm = TRUE) %>% round(nb)})
-    }
-    if (quant > 0) {# bornes des quantiles
+      if (quant == 0 & !med) {
+        # dans ce cas on veut que les min et max
+        quant <- 1
+      }
+
+      # transformation du nombre de quantiles en bornes
       val_quant <- seq(0, 1, 1 / quant)
-      if (med & quant %% 2) { # si mediane et qu'elle est pas contenue dans les quantiles alors on l'ajoute au milieu
+
+      if (med & quant %% 2) {
+        # si on veut la mediane et qu'elle est pas contenue dans les quantiles alors on l'ajoute au milieu des bornes
         val_quant <- c(val_quant, 0.5)
         val_quant <- val_quant[order(val_quant)]
       }
-      if (!med) {# on enleve la mediane
+
+      if (!med & any(val_quant == .5)) {
+        # on enleve la mediane si elle est explicitement retiree des arguments
         val_quant <- val_quant[val_quant != .5]
+      message("Mediane retiree des quantiles malgre sa comptabilisation car med = FALSE")
       }
-      val_quant <- val_quant[-c(1, length(val_quant))]
-      med <- FALSE # pour pas la faire deux fois
+
+      if (!minmax) {
+        # on enleve les bornes 0 et 1 qui sont les min et max
+        val_quant <- val_quant[!val_quant %in% c(0, 1)]
+      }
+
       fonc[[length(fonc) + 1]] <- list(Quantiles = function(x) {
-        quantile(x, probs = val_quant, na.rm = TRUE) %>%
-          as.list() %>%
+        Hmisc::wtd.quantile(x, weights = pond, probs = val_quant, na.rm = TRUE, normwt = TRUE) %>%
+          t() %>%
           as.data.frame() %>%
-          rename_with(~str_remove(.x, "X") %>% str_replace("\\.", "%") %>% str_replace("50%", "Med"))
+          rename_with(~.x %>%
+                        str_remove_all("\\s") %>%
+                        str_replace("^0%", "Min") %>%
+                        str_replace("^50%", "Med") %>%
+                        str_replace("100%", "Max"))
       }
       )
-    } else if (med) {# si pas de quantiles mais que quand meme mediane
-      fonc[[length(fonc) + 1]] <- list(Mediane = function(x) {quantile(x, probs = 0.5, na.rm = TRUE)})
     }
+
     if (test.norm) {
       fonc[[length(fonc) + 1]] <- list(`Shapiro-Wilk` = function(x) {
         shap <- shapiro.test(x)$p.value
@@ -122,16 +157,6 @@ desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = TRUE, ic =
     # on a une liste de liste alors qu'on veut qu'une liste
     fonc <- unlist(fonc)
 
-    if (!NR) {
-      tab1 <- tab
-      # on enleve les NA
-      tab <- tab %>% filter(!is.na({{var}}))
-        # s'il n'y a que des NA alors pas de lignes
-      if (nrow(tab) == 0) {
-        warning(paste(nom, " ne contient que des non-reponses, elles sont gardees pour cette variable."), call. = FALSE)
-        tab <- tab1
-      }
-    }
     suppressWarnings(
       # on applique toutes les fonctions selectionnees a la variable quanti
       tab <- tab %>% summarise(map_dfc(fonc, ~exec(.x, {{var}})))
