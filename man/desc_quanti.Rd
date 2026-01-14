@@ -12,7 +12,7 @@ desc_quanti(
   test.norm = FALSE,
   ic = TRUE,
   ic_seuil = 0.05,
-  nb = 2,
+  nb = 1,
   med = TRUE,
   quant = 4,
   minmax = TRUE,
@@ -38,7 +38,7 @@ desc_quanti(
 
 \item{ic_seuil}{risque de première espèce pour l'intervalle de confiance.}
 
-\item{nb}{2 par défaut. Nombre de décimales.}
+\item{nb}{1 par défaut. Nombre de décimales.}
 
 \item{med}{TRUE par défaut. Médiane de l'échantillon}
 
@@ -60,7 +60,7 @@ desc_quanti(
 un data.frame avec les indicateurs sélectionnés pour les variables quantitatives choisies
 }
 \description{
-Permet d'obtenir les principaux indicateurs concernant un groupe de variables quantitatives
+Permet d'obtenir les principaux indicateurs concernant un ensemble de variables quantitatives
 }
 \author{
 Julio Ricardo Davalos

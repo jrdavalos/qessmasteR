@@ -1,7 +1,7 @@
 #' @title  desc_quanti
 #' @author Julio Ricardo Davalos
 #'
-#' @description Permet d'obtenir les principaux indicateurs concernant un groupe de variables quantitatives
+#' @description Permet d'obtenir les principaux indicateurs concernant un ensemble de variables quantitatives
 #'
 #' @param data base de données
 #' @param ... variables souhaitées (tidyselect)
@@ -10,7 +10,7 @@
 #' @param test.norm FALSE par défaut. P-value du test de normalité de l'échantillon (test de Shapiro-Wilk). Si la p-value est en dessous de votre seuil de significativité alors, l'hypothèse de normalité n'est pas retenue.
 #' @param ic TRUE par défaut. Intervalle de confiance de la moyenne. N'apparait pas si moy = FALSE
 #' @param ic_seuil risque de première espèce pour l'intervalle de confiance.
-#' @param nb 2 par défaut. Nombre de décimales.
+#' @param nb 1 par défaut. Nombre de décimales.
 #' @param med TRUE par défaut. Médiane de l'échantillon
 #' @param quant 4 par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin. Si elle est exclue, on l'enlève des quantiles.
 #' @param minmax TRUE par défaut. Minimum et maximum.
@@ -31,7 +31,7 @@
 #'
 #' @export
 
-desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = FALSE, ic = TRUE, ic_seuil = 0.05, nb = 2, med = TRUE,
+desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = FALSE, ic = TRUE, ic_seuil = 0.05, nb = 1, med = TRUE,
                        quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, msg = FALSE, pond = NULL, norm_pond = TRUE) {
 
   if (!moy) {
