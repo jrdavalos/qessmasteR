@@ -101,11 +101,12 @@ multi_croise <- function(data, var_princ, ..., NR = FALSE, pct_ligne = TRUE, nb 
   # on cree une liste de toutes les variables a utiliser dans le tableau
   # d'abord le dataframe avec uniquement les variables souhaitées :
   data_vars <- data %>% select(...)
+  if (ncol(data_vars) == 0) {
+    warning("Pas de variable selectionnee a croiser avec ", deparse(substitute(var_princ)), ".\nUtilisation de toutes les autres variables categorielles.", call. = FALSE)
+    data_vars <- data %>% select(everything() & !where(is.numeric) & -{{var_princ}})
+  }
   # on peut faire la liste des NOMS comme suit :
   list_vars <- map(set_names(names(data_vars)), ~ quo(!!as.name(.x)))
-  if (length(list_vars) == 0) {
-    stop(paste("Pas de variable a croiser avec", deparse(substitute(var_princ))))
-  }
   # on applique nos fonctions à la list :
   map_dfr(list_vars, ~ transformation(tableau(!!.x)), .id = "Variable")
   # map_dfr applique la fonction tableau() a chaque element de la liste

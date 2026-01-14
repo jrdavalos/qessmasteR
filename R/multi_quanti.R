@@ -216,13 +216,15 @@ multi_quanti <- function(data, var_princ, ..., moy = TRUE, test.diffmoy = TRUE, 
       mutate(Modalite = as.character(Modalite))
 
   }
+
   # d'abord le dataframe avec uniquement les variables souhaitées :
   data_vars <- data %>% select(...)
+  if (ncol(data_vars) == 0) {
+    warning("Pas de variable selectionnee a croiser avec ", deparse(substitute(var_princ)), ".\nUtilisation de toutes les autres variables categorielles.", call. = FALSE)
+    data_vars <- data %>% select(everything() & !where(is.numeric) & -{{var_princ}})
+  }
   # on peut faire la liste des NOMS comme suit :
   list_vars <- map(set_names(names(data_vars)), ~ quo(!!as.name(.x)))
-  if (length(list_vars) == 0) {
-    stop(paste("Pas de variable a croiser avec", deparse(substitute(var_princ))))
-  }
   # on voit si force_anova = TRUE
   if (is.null(force_anova)) {
     force_anova <- FALSE
