@@ -25,13 +25,15 @@
 #' @importFrom dplyr bind_rows mutate %>% filter group_by count rename select pull across summarise
 #' @importFrom tidyselect everything
 #' @importFrom stringr str_remove_all str_replace
-#' @importFrom purrr map map_dfr map_lgl keep
+#' @importFrom purrr map map_dfr map_lgl keep every
 #' @importFrom Hmisc wtd.quantile
+#' @importFrom rlang exec
 #'
 #' @export
 
 desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = FALSE, ic = TRUE, ic_seuil = 0.05, nb = 2, med = TRUE,
                        quant = 4, minmax = TRUE, eff = TRUE, eff_na = FALSE, msg = FALSE, pond = NULL, norm_pond = TRUE) {
+
   if (!moy) {
     ic <- FALSE
     sd <- FALSE
@@ -72,7 +74,7 @@ desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = FALSE, ic 
 
     if (eff) {# effectifs ou non
       fonc[[length(fonc) + 1]] <- list(N = function(x) {sum(!is.na(x))})
-    }
+    } else eff_na <- FALSE
 
     if (eff_na) {# nombre de NA de la variable quanti ou non
       fonc[[length(fonc) + 1]] <- list(NR = function(x) {sum(is.na(x))})
@@ -85,18 +87,17 @@ desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = FALSE, ic 
 
         # calcul de la moyenne
         if (moy) {
-          Moy <- data.frame(Moy = coef(model) |> round(nb))
+          Moy <- data.frame(Moy = coef(model))
         } else Moy <- NULL
 
         # ecart-type ?
         if (sd) {
-          SD <- data.frame(SD = sigma(model) |> round(nb))
+          SD <- data.frame(SD = sigma(model))
         } else SD <- NULL
 
         # intervalle de confiance ?
         if (ic) {
           IC <- confint(model, level = (1 - ic_seuil)) %>%
-              round(nb) %>%
               as.data.frame() %>%
               rename(`IC-` = `2.5 %`, `IC+` = `97.5 %`)
         } else IC <- NULL
@@ -167,6 +168,8 @@ desc_quanti <- function(data, ..., moy = TRUE, sd = TRUE, test.norm = FALSE, ic 
     return(tab)
     }
 
-  # boucle pour toute la liste :
-  map_dfr(list_vars, ~desc(!!.x), .id = "Variable")
+  # boucle pour toute la liste de variables :
+  map_dfr(list_vars, ~desc(!!.x), .id = "Variable") %>%
+    mutate(across(where(is.numeric), ~round(.x, nb))) %>%
+    return()
 }

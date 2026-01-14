@@ -30,7 +30,7 @@ desc_quali <- function(data, ..., eff = TRUE, freq = TRUE, nb = 1, cum_freq = FA
   # tidyselect des variables a utiliser :
   data_vars <- data %>% select(...)
   if (ncol(data_vars) == 0) {
-    warning("Pas de variable selectionnee, utilisation de toutes les variables non numeriques.", call. = FALSE)
+    warning("Pas de variable selectionnee, utilisation de toutes les variables categorielles.", call. = FALSE)
     data_vars <- data %>% select(everything() & !where(is.numeric))
   }
   # liste des noms :
