@@ -43,8 +43,13 @@ Permet d'obtenir un tableau croise avec les pourcentages en lignes, mais ajoute 
 En cas de variable de pondération, les pourcentages en lignes et de la modalité sont pondérés mais on peut choisir entre effectifs pondérés et effectifs réels.
 }
 \examples{
-data <- data.frame(id=1:500, group = rep(LETTERS[1:2], 500/2), age = sample(18:30, 500, replace = TRUE), weights = abs(rnorm(500)))
+data <- data.frame(
+id = 1:500,
+group = rep(LETTERS[1:2], 500 / 2),
+age = sample(18:30, 500, replace = TRUE),
+weights = abs(rnorm(500)))
 lprop_pctot(data, age, group, data$weights)
+
 }
 \author{
 Julio Ricardo Davalos

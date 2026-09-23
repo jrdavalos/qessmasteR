@@ -20,8 +20,13 @@
 #'
 #' @export
 #' @examples
-#' data <- data.frame(id=1:500, group = rep(LETTERS[1:2], 500/2), age = sample(18:30, 500, replace = TRUE), weights = abs(rnorm(500)))
+#' data <- data.frame(
+#' id = 1:500,
+#' group = rep(LETTERS[1:2], 500 / 2),
+#' age = sample(18:30, 500, replace = TRUE),
+#' weights = abs(rnorm(500)))
 #' lprop_pctot(data, age, group, data$weights)
+#'
 lprop_pctot <- function(data, x, y, pond = NULL, tot_pond = FALSE, norm_pond = FALSE, num = TRUE, ch = 1, nr = c("no", "ifany", "always")){
   # tableau des pct par ligne
   if (nr[1] == "always") {d = FALSE} else d = TRUE

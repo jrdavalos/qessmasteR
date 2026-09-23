@@ -1,7 +1,7 @@
 Package: qessmasteR
 Date: 2021-03-23
 Title: Fonctions simplificatrices pour les traitements statistiques en sciences sociales
-Version: 1.0
+Version: 2.0
 Authors@R: 
     c(person(given = "Julio Ricardo",
            family = "Davalos",
@@ -15,7 +15,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
+RoxygenNote: 8.0.0
 Imports: 
   magrittr,
   questionr,
@@ -30,8 +30,9 @@ Imports:
   janitor,
   DescTools,
   FactoMineR,
-  Hmisc
+  Hmisc,
+  survey
 Depends: 
-    R (>= 3.4)
+    R (>= 4.1.0)
 URL: https://github.com/jrdavalos/qessmasteR
 BugReports: https://github.com/jrdavalos/qessmasteR/issues

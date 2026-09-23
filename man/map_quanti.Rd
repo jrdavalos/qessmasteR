@@ -5,12 +5,10 @@
 \title{map_quanti}
 \usage{
 map_quanti(
-  data,
+  data = NULL,
   ...,
   moy = TRUE,
   test.diffmoy = TRUE,
-  force_anova = NULL,
-  ic_test = 0.05,
   sd = TRUE,
   ic = TRUE,
   ic_seuil = 0.05,
@@ -22,60 +20,63 @@ map_quanti(
   eff_na = FALSE,
   freq = TRUE,
   signif = NULL,
+  pond = NULL,
+  design = NULL,
+  norm_pond = TRUE,
   NR = FALSE,
   msg = FALSE
 )
 }
 \arguments{
-\item{data}{base de données}
+\item{data}{Base de données. Peut être omise si un \code{design} valide  est fourni.}
 
-\item{...}{variables catégorielles et quantitatives}
+\item{...}{Variables quantitatives et catégorielles à analyser.}
 
-\item{moy}{TRUE par défaut. Moyenne par modalité.}
+\item{moy}{\code{TRUE} par défaut. Calcule la moyenne par modalité.}
 
-\item{test.diffmoy}{TRUE par défaut. Réalise un ANOVA et retourne la p-value du test d'égalité des moyennes adapté.
-La procédure est la suivante: on réalise une ANOVA et un test de Shapiro-Wilk (test de normalité, remplacé par un test de Kolmogorov-Smirnov si l'effectif est supérieur à 5000 étant donné que le test de Shapiro-Wilk est sensible aux grands effectifs) sur celle-ci.
-Si la normalité des résidus est rejetée alors le résultat final est un test de Kruskal-Wallis (on aura alors P(K)).
-Si elle ne l'est pas alors on réalise un test de Levene (homoscédasticité).
-Si l'homoscédasticité est rejetée alors le résultat final est un ANOVA de Welch (on aura alors P(W)), sinon on conserve l'ANOVA (on aura alors P(A)).}
+\item{test.diffmoy}{\code{TRUE} par défaut. Réalise un test global d'égalité des moyennes entre les modalités, tenant compte du design avec \code{survey::svyglm()} et \code{survey::regTermTest()}.
+Ce test repose sur une approximation asymptotique et doit être interprété avec prudence lorsque les effectifs ou le nombre de grappes sont faibles, ou lorsque la distribution comporte des valeurs extrêmes.}
 
-\item{force_anova}{Permet de forcer la fonction à considérer la distribution comme normale. Vecteur des noms des variables catégorielles pour lesquelles forcer.
-Peut être utile si on considère que la distribution est malgré tout suffisamment proche d'une distribution normale pour ne pas avoir d'incidence sur l'analyse.
-Peut prendre la valeur TRUE si on veut forcer pour toutes les variables.}
+\item{sd}{\code{TRUE} par défaut. Calcule l'écart-type par modalité.}
 
-\item{ic_test}{risque de première espèce des tests de d'égalité des moyennes.}
+\item{ic}{\code{TRUE} par défaut. Calcule l'intervalle de confiance de la moyenne par modalité. Ignoré si \code{moy = FALSE}.}
 
-\item{sd}{TRUE par défaut. Écart-type par modalité.}
+\item{ic_seuil}{Risque de première espèce utilisé pour l'intervalle de confiance des moyennes.}
 
-\item{ic}{TRUE par défaut. Intervalle de confiance de la moyenne par modalité. N'apparait pas si moy = FALSE}
+\item{nb}{Nombre de décimales pour les statistiques calculées.}
 
-\item{ic_seuil}{risque de première espèce pour l'intervalle de confiance.}
+\item{med}{\code{TRUE} par défaut. Calcule la médiane par modalité.}
 
-\item{nb}{nombre de décimales pour la moyenne, l'écart-type et l'intervalle de confiance.}
+\item{quant}{\code{4} par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle est ajoutée si nécessaire.
+Utiliser \code{1} ou moins pour ne pas calculer les quantiles.}
 
-\item{med}{TRUE par défaut. Médiane par modalité.}
+\item{minmax}{\code{TRUE} par défaut. Calcule le minimum et le maximum par modalité.}
 
-\item{quant}{4 par défaut. Nombre de quantiles. Si la médiane est sélectionnée, elle sera ajoutée si besoin.}
+\item{eff}{\code{TRUE} par défaut. Calcule les effectifs pondérés par modalité.}
 
-\item{minmax}{TRUE par défaut. Minimum et maximum par modalité.}
+\item{eff_na}{\code{FALSE} par défaut. Calcule les effectifs pondérés des non-réponses de la variable quantitative par modalité.}
 
-\item{eff}{TRUE par défaut. Effectifs par modalité.}
+\item{freq}{\code{TRUE} par défaut. Calcule les fréquences pondérées par modalité.}
 
-\item{eff_na}{FALSE par défaut. Effectifs des non-réponses dans la variable quantitative par modalité.}
+\item{signif}{\code{NULL} par défaut. Peut prendre les valeurs \code{"etoiles"}ou \code{"seuils"} pour remplacer la p-value par des étoiles ou des seuils.}
 
-\item{freq}{TRUE par défaut. Fréquence par modalité.}
+\item{pond}{Variable de pondération facultative, à fournir sans guillemets. Utilisée si aucun \code{design} valide n'est fourni.}
 
-\item{signif}{NULL par défaut, prend les valeurs 'etoiles' ou 'seuils'. Permet d'afficher les résultats des tests avec des étoiles ou avec des seuils à la place de la p.value en clair.}
+\item{design}{Objet créé avec \code{survey::svydesign()} ou \code{survey::svrepdesign()}.}
 
-\item{NR}{FALSE par défaut. Garde les non-réponses des variables catégorielles.}
+\item{norm_pond}{\code{FALSE} par défaut.
+Normalise les poids utilisés pour les effectifs affichés afin que leur somme corresponde au nombre d'observations conservées.
+Cette normalisation ne modifie pas le plan utilisé pour les estimations et les tests.}
 
-\item{msg}{FALSE par défaut. Envoie un message pour chaque variable terminée : utile si bug inexpliqué.}
+\item{NR}{\code{FALSE} par défaut. Conserve les non-réponses des variables catégorielles.}
+
+\item{msg}{\code{FALSE} par défaut. Affiche un message à la fin du traitement de chaque variable.}
 }
 \value{
-Un tibble avec en colonne les indicateurs synthétiques de la variable d'intérêt selon les modalités des variables catégorielles choisies.
+Un tibble contenant les indicateurs synthétiques de chaque variable quantitative selon les modalités de chaque variable catégorielle.
 }
 \description{
-Applique multi_quanti à plusieurs variables quantitatives
+Applique \code{\link[=multi_quanti]{multi_quanti()}} à plusieurs variables quantitatives et catégorielles.
 }
 \author{
 Julio Ricardo Davalos
